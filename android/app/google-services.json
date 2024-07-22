@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "471128779093",
+    "project_id": "corporate-manager-b6fe3",
+    "storage_bucket": "corporate-manager-b6fe3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471128779093:android:ff083857ad82d2fa29a7dc",
+        "android_client_info": {
+          "package_name": "com.example.corporate_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXe2LC0qWoQ-ot7k08pCqQBrVGHcdAga8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
