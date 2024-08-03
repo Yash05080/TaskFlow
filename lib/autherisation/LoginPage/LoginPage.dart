@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class Loginpage extends StatefulWidget {
-  const Loginpage({super.key});
+  final VoidCallback showRegisterPage;
+  const Loginpage({super.key, required this.showRegisterPage});
 
   @override
   State<Loginpage> createState() => _LoginpageState();
@@ -156,6 +157,10 @@ class _LoginpageState extends State<Loginpage> {
                     ],
                   ),
                 ),
+                InkWell(
+                    onTap: widget.showRegisterPage,
+                    child: Text("Create account",
+                        style: TextStyle(color: Colors.lightBlue))),
               ],
             ),
           ),
