@@ -157,6 +157,9 @@ class _LoginpageState extends State<Loginpage> {
                     ],
                   ),
                 ),
+                SizedBox(
+                  height: 10,
+                ),
                 InkWell(
                     onTap: widget.showRegisterPage,
                     child: Text("Create account",
