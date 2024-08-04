@@ -1,7 +1,6 @@
-import 'package:corporate_manager/Pages/HomePage/HomePage.dart';
-import 'package:corporate_manager/autherisation/LoginPage/LoginPage.dart';
+
 import 'package:corporate_manager/autherisation/LoginPage/MainDirector.dart';
-import 'package:corporate_manager/autherisation/LoginPage/register.dart';
+
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

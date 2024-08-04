@@ -1,3 +1,4 @@
+
 import 'package:corporate_manager/Pages/HomePage/HomePage.dart';
 import 'package:corporate_manager/Pages/Profile/Profilepage.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/freelancingboard.dart';
@@ -15,7 +16,7 @@ class _NavigationBarState extends State<MainNavBar> {
   List screens = [
     ChatPage(),
     TaskPage(),
-    MyHomePage(),
+    MyDashBoard(),
     Freelancingboard(),
     ProfilePage(),
   ];
