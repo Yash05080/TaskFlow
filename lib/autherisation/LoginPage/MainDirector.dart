@@ -1,6 +1,7 @@
 import 'package:corporate_manager/Pages/HomePage/HomePage.dart';
 import 'package:corporate_manager/autherisation/LoginPage/LoginPage.dart';
 import 'package:corporate_manager/autherisation/LoginPage/authpage.dart';
+import 'package:corporate_manager/MainNavBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class _MainDirectorState extends State<MainDirector> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return MyHomePage();
+            return MainNavBar();
           } else {
             return AuthPage();
           }

@@ -1,6 +1,6 @@
 import 'package:corporate_manager/Pages/HomePage/HomePage.dart';
 import 'package:corporate_manager/autherisation/LoginPage/LoginPage.dart';
-import 'package:corporate_manager/autherisation/LoginPage/director.dart';
+import 'package:corporate_manager/autherisation/LoginPage/MainDirector.dart';
 import 'package:corporate_manager/autherisation/LoginPage/register.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Corporate Manager',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
