@@ -24,6 +24,7 @@ class _NavigationBarState extends State<MainNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        heroTag: 'HomeTag',
         onPressed: () {
           setState(() {
             currentIndex = 2;
