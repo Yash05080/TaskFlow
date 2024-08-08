@@ -10,8 +10,8 @@ class LogOutButton extends StatelessWidget {
       onPressed: () {
         FirebaseAuth.instance.signOut();
       },
-      color: Colors.red,
-      child: Text("log out"),
+      color: Colors.indigo,
+      child: const Text("log out"),
     );
   }
 }

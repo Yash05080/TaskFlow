@@ -58,15 +58,15 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Registration')),
+      appBar: AppBar(title: const Text('Registration')),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: <Widget>[
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Role'),
+                decoration: const InputDecoration(labelText: 'Role'),
                 value: _role,
                 items: ['Employee', 'Manager', 'Admin'].map((String role) {
                   return DropdownMenuItem<String>(
@@ -83,48 +83,48 @@ class _RegisterPageState extends State<RegisterPage> {
                 onSaved: (value) => _role = value!,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'First Name'),
+                decoration: const InputDecoration(labelText: 'First Name'),
                 validator: (value) =>
                     value!.isEmpty ? 'Enter first name' : null,
                 onSaved: (value) => _name = value!,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Last Name'),
+                decoration: const InputDecoration(labelText: 'Last Name'),
                 validator: (value) => value!.isEmpty ? 'Enter last name' : null,
                 onSaved: (value) => _lastName = value!,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Phone Number'),
+                decoration: const InputDecoration(labelText: 'Phone Number'),
                 validator: (value) =>
                     value!.isEmpty ? 'Enter phone number' : null,
                 onSaved: (value) => _phoneNo = value!,
                 keyboardType: TextInputType.phone,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) => value!.isEmpty ? 'Enter email' : null,
                 onSaved: (value) => _email = value!,
                 keyboardType: TextInputType.emailAddress,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 validator: (value) =>
                     value!.length < 6 ? 'Enter a password 6+ chars long' : null,
                 onSaved: (value) => _password = value!,
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _registerUser,
-                child: Text('Register'),
+                child: const Text('Register'),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               InkWell(
                 onTap: widget.showLoginPage,
                 child: RichText(
-                  text: TextSpan(children: <TextSpan>[
+                  text: const TextSpan(children: <TextSpan>[
                     TextSpan(text: "Already have an account? "),
                     TextSpan(
                         text: "Login Now",

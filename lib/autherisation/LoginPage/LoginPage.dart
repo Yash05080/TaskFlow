@@ -1,3 +1,4 @@
+
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,8 +14,8 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   Future signin() async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _usernameController.text.trim(),
@@ -68,12 +69,12 @@ class _LoginpageState extends State<Loginpage> {
                                 color: HexColor("dbd8e3"),
                               ),
                               hintText: "username",
-                              hintStyle: TextStyle(color: Colors.grey),
+                              hintStyle: const TextStyle(color: Colors.grey),
                               border: InputBorder.none),
                         ),
                       )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Padding(
@@ -94,7 +95,7 @@ class _LoginpageState extends State<Loginpage> {
                           obscureText: _obscureText,
                           decoration: InputDecoration(
                             hintText: "password",
-                            hintStyle: TextStyle(color: Colors.grey),
+                            hintStyle: const TextStyle(color: Colors.grey),
                             border: InputBorder.none,
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -109,7 +110,7 @@ class _LoginpageState extends State<Loginpage> {
                         ),
                       )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ClipRRect(
@@ -145,7 +146,7 @@ class _LoginpageState extends State<Loginpage> {
                             signin();
                             // Handle sign in button press
                           },
-                          child: Text(
+                          child: const Text(
                             'Sign In',
                             style: TextStyle(
                               fontSize: 18,
@@ -157,12 +158,12 @@ class _LoginpageState extends State<Loginpage> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 InkWell(
                     onTap: widget.showRegisterPage,
-                    child: Text("Create account",
+                    child: const Text("Create account",
                         style: TextStyle(color: Colors.lightBlue))),
               ],
             ),

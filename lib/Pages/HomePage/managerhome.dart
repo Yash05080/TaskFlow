@@ -12,7 +12,7 @@ class _ManagerDashBoardState extends State<ManagerDashBoard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("MAnager"),
+        title: const Text("MAnager"),
       ),
     );
   }

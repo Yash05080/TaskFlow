@@ -12,7 +12,7 @@ class _EmployeeDashBoardState extends State<EmployeeDashBoard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("employee"),
+        title: const Text("employee"),
       ),
     );
   }

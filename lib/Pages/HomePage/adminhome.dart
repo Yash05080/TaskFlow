@@ -12,7 +12,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("admin"),
+        title: const Text("admin"),
       ),
     );
   }

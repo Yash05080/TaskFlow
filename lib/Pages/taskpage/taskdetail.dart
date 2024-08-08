@@ -7,7 +7,7 @@ class TaskDetailPage extends StatelessWidget {
   final TaskService _taskService = TaskService();
   final Task task;
 
-  TaskDetailPage({required this.task});
+  TaskDetailPage({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +16,10 @@ class TaskDetailPage extends StatelessWidget {
         title: Text(task.title),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () async {
               await _taskService.deleteTask(task.id);
+              // ignore: use_build_context_synchronously
               Navigator.pop(context);
             },
           ),

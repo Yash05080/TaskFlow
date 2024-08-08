@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corporate_manager/Pages/taskpage/createtaskpage.dart';
 import 'package:corporate_manager/Pages/taskpage/taskservice.dart';
 import 'package:corporate_manager/Pages/taskpage/updatetaskpage.dart';
+
 import 'package:corporate_manager/models/task_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
@@ -32,27 +34,27 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Task Panel')),
+      appBar: AppBar(title: const Text('Task Panel')),
       body: FutureBuilder<String?>(
         future: getUserRole(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('User role not found'));
+            return const Center(child: Text('User role not found'));
           } else {
             String role = snapshot.data!;
             return StreamBuilder<QuerySnapshot>(
               stream: _taskService.getAllTasks(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No tasks found'));
+                  return const Center(child: Text('No tasks found'));
                 } else {
                   List<Task> tasks = snapshot.data!.docs
                       .map((doc) => Task.fromDocument(doc))
@@ -61,36 +63,45 @@ class _TaskPageState extends State<TaskPage> {
                     itemCount: tasks.length,
                     itemBuilder: (context, index) {
                       Task task = tasks[index];
-                      return ListTile(
-                        title: Text(task.title),
-                        subtitle: Text('Status: ${task.status}'),
-                        trailing: role == "Admin" || role == "Manager"
-                            ? Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      // Navigate to update task page with task details
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              UpdateTaskPage(task: task),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  if (role == "Admin")
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          tileColor: HexColor("f1e0d0"),
+                          iconColor: HexColor("0b1623"),
+                          textColor: HexColor("0b1623"),
+                          title: Text(task.title),
+                          subtitle: Text('Status: ${task.status}'),
+                          trailing: role == "Admin" || role == "Manager"
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     IconButton(
-                                      icon: Icon(Icons.delete),
-                                      onPressed: () async {
-                                        await _taskService.deleteTask(task.id);
+                                      icon: const Icon(Icons.edit),
+                                      onPressed: () {
+                                        // Navigate to update task page with task details
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UpdateTaskPage(task: task),
+                                          ),
+                                        );
                                       },
                                     ),
-                                ],
-                              )
-                            : null,
+                                    if (role == "Admin")
+                                      IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        onPressed: () async {
+                                          await _taskService
+                                              .deleteTask(task.id);
+                                        },
+                                      ),
+                                  ],
+                                )
+                              : null,
+                        ),
                       );
                     },
                   );
@@ -115,7 +126,7 @@ class _TaskPageState extends State<TaskPage> {
                   MaterialPageRoute(builder: (context) => CreateTaskPage()),
                 );
               },
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
             );
           } else {
             return Container();

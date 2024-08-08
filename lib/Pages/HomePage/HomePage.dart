@@ -30,24 +30,24 @@ class _MyDashBoardState extends State<MyDashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('DashBoard')),
+      appBar: AppBar(title: const Text('DashBoard')),
       body: FutureBuilder<String?>(
         future: getUserRole(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('User role not found'));
+            return const Center(child: Text('User role not found'));
           } else {
             String role = snapshot.data!;
             if (role == "Admin") {
-              return AdminDashBoard();
+              return const AdminDashBoard();
             } else if (role == "Manager") {
-              return ManagerDashBoard();
+              return const ManagerDashBoard();
             } else {
-              return EmployeeDashBoard();
+              return const EmployeeDashBoard();
             }
           }
         },

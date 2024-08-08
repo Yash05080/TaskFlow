@@ -4,6 +4,7 @@ import 'package:corporate_manager/autherisation/LoginPage/MainDirector.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,10 +22,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Corporate Manager',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 3, 3, 255)),
+        colorScheme: ColorScheme.fromSeed(seedColor:HexColor("fff8f5")),
         useMaterial3: true,
       ),
-      home: MainDirector(),
+      home: const MainDirector(),
     );
   }
 }
