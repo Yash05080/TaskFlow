@@ -10,6 +10,6 @@ class Freelancingboard extends StatefulWidget {
 class _FreelancingboardState extends State<Freelancingboard> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold();
   }
 }
