@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -52,7 +52,7 @@ class _ForgetPassState extends State<ForgetPass> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Forgot Password",
           style: TextStyle(
               color: Color.fromARGB(255, 101, 67, 33),
@@ -62,21 +62,21 @@ class _ForgetPassState extends State<ForgetPass> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
           SvgPicture.asset(
             'assets/icons/forgotpass.svg',
             height: 200, // Adjust the size as needed
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
-          SizedBox(
+          const SizedBox(
             height: 25,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
               "Dear user, please enter your email down to recieve the reset password link",
               style: TextStyle(
@@ -86,7 +86,7 @@ class _ForgetPassState extends State<ForgetPass> {
               softWrap: true,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
           FadeInUp(
@@ -123,7 +123,7 @@ class _ForgetPassState extends State<ForgetPass> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
 
@@ -144,7 +144,7 @@ class _ForgetPassState extends State<ForgetPass> {
                     ),
                     elevation: 2,
                     shadowColor: Colors.transparent,
-                    side: BorderSide(
+                    side: const BorderSide(
                       color: Color.fromARGB(255, 101, 67, 33),
                       width: 1.0,
                     ),

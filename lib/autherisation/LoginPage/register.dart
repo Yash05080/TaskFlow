@@ -27,37 +27,50 @@ class _RegisterPageState extends State<RegisterPage> {
   String _password = '';
 
   void _registerUser() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
 
-      try {
-        UserCredential userCredential =
-            await _auth.createUserWithEmailAndPassword(
-          email: _email,
-          password: _password,
-        );
+    try {
+      // Create a new user with email and password
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _email,
+        password: _password,
+      );
 
-        UserModel newUser = UserModel(
-          uid: userCredential.user!.uid,
-          role: _role,
-          name: _name,
-          lastName: _lastName,
-          email: _email,
-          phoneNo: _phoneNo,
-        );
+      // Combine name and lastName to form displayName
+      String displayName = '$_name $_lastName';
 
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(newUser.uid)
-            .set(newUser.toMap());
+      // Update the user's displayName
+      await userCredential.user!.updateDisplayName(displayName);
 
-        // Navigate to another page or show success message
-      } catch (e) {
-        print(e);
-        // Handle error (e.g., show a message to the user)
-      }
+      // Update the user in Firestore with additional information
+      UserModel newUser = UserModel(
+        uid: userCredential.user!.uid,
+        role: _role,
+        name: _name,
+        lastName: _lastName,
+        email: _email,
+        phoneNo: _phoneNo,
+      );
+
+      // Add the user details to the Firestore collection
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(newUser.uid)
+          .set(newUser.toMap());
+
+      // Optionally, refresh the current user's profile
+      await userCredential.user!.reload();
+      
+      // Navigate to another page or show success message (e.g., login page or home page)
+    } catch (e) {
+      print(e);
+      // Handle error (e.g., show a message to the user)
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

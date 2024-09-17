@@ -1,9 +1,9 @@
-import 'dart:ui';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:corporate_manager/autherisation/LoginPage/forgotpass.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -33,14 +33,16 @@ class _LoginpageState extends State<Loginpage> {
         email: _usernameController.text.trim(),
         password: _passwordController.text.trim(),
       );
-//pop circular indicator
+      //pop circular indicator 
+
       if (context.mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
+
       //display error message
 
       displayMessage(e.code);
-    }
+      }
   }
 
   //display a dialog box
@@ -79,8 +81,8 @@ class _LoginpageState extends State<Loginpage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.0),
                         child: Text(
                           "Welcome back user",
                           style: TextStyle(
@@ -90,7 +92,7 @@ class _LoginpageState extends State<Loginpage> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 35,
                       ),
                 // welcome image
@@ -98,7 +100,7 @@ class _LoginpageState extends State<Loginpage> {
                   'assets/icons/login.svg',
                   height: 200, // Adjust the size as needed
                 ),
-                SizedBox(height: 40,),
+                const SizedBox(height: 40,),
 
                 // username textfeild
 
@@ -206,19 +208,19 @@ class _LoginpageState extends State<Loginpage> {
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return ForgetPass();
+                              return const ForgetPass();
                             }));
                           },
                           child: Text(
                             "forgot password?",
-                            style: TextStyle(color: HexColor("214365"),fontWeight: FontWeight.w600),
+                            style: TextStyle(color: HexColor("800000"),fontWeight: FontWeight.w600),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
 
@@ -239,7 +241,7 @@ class _LoginpageState extends State<Loginpage> {
                           ),
                           elevation: 2,
                           shadowColor: Colors.transparent,
-                          side: BorderSide(
+                          side: const BorderSide(
                             color: Color.fromARGB(255, 101, 67, 33),
                             width: 1.0,
                           ),
@@ -272,7 +274,7 @@ class _LoginpageState extends State<Loginpage> {
                     onTap: widget.showRegisterPage,
                     child: RichText(
                       text:  TextSpan(children: <TextSpan>[
-                        TextSpan(
+                        const TextSpan(
                             text: "Don't have an account? ",
                             style: TextStyle(color: Colors.brown)),
                         TextSpan(

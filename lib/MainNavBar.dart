@@ -21,7 +21,7 @@ class _NavigationBarState extends State<MainNavBar> {
     const TaskPage(),
     const MyDashBoard(),
     const Freelancingboard(),
-    const ProfilePage(),
+   ProfilePage(),
   ];
 
   @override
