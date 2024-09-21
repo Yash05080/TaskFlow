@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:corporate_manager/Pages/freelancing%20board/Posts.dart';
-import 'package:corporate_manager/Pages/freelancing%20board/fetchrole.dart';
+import 'package:corporate_manager/Pages/freelancing%20board/widgets/Posts.dart';
+import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +38,7 @@ class _FreelancingboardState extends State<Freelancingboard> {
       FirebaseFirestore.instance.collection("User Posts").add({
         'UserEmail': currentUser.email,
         'Message': textController.text,
+        'Role':_userRole,
         'TimeStamp': Timestamp.now(),
         'Likes':[],
       });
@@ -78,7 +79,7 @@ class _FreelancingboardState extends State<Freelancingboard> {
                         return PostSection(
                           message: post['Message'],
                           user: post['UserEmail'],
-                          role: _userRole,
+                          role: post['Role'],
                           postId: post.id,
                           likes: List<String>.from(post['Likes']??[]),
 

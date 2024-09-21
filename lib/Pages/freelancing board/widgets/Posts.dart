@@ -1,4 +1,5 @@
-import 'package:corporate_manager/Pages/freelancing%20board/likebutton.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corporate_manager/Pages/freelancing%20board/functions/likebutton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -39,6 +40,20 @@ class _PostSectionState extends State<PostSection> {
     setState(() {
       isLiked = !isLiked;
     });
+
+    //fetch the document reference
+    DocumentReference postRef =
+        FirebaseFirestore.instance.collection('User Posts').doc(widget.postId);
+
+    if (isLiked) {
+      postRef.update({
+        'Likes': FieldValue.arrayUnion([currentUser.email])
+      });
+    } else {
+      postRef.update({
+        'Likes': FieldValue.arrayRemove([currentUser.email])
+      });
+    }
   }
 
   @override
@@ -115,7 +130,10 @@ class _PostSectionState extends State<PostSection> {
                       //button
                       LikeButton(isLiked: isLiked, onTap: toggleLike),
 
+                      SizedBox(width: 8,),
+
                       //like count
+                      Text(widget.likes.length.toString())
                     ],
                   )
 

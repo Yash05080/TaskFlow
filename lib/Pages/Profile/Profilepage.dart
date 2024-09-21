@@ -1,5 +1,6 @@
 import 'package:corporate_manager/Pages/Profile/feature%20pages/Updateprofile.dart';
-import 'package:corporate_manager/Pages/Profile/logoutbutton.dart';
+import 'package:corporate_manager/Pages/Profile/widgets/logoutbutton.dart';
+import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,16 +12,31 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? _userRole;
+  
+  Future<void> getUserRole() async {
+    UserService userService = UserService();
+    String? role = await userService.fetchUserRole(); // Fetch the user role
+    setState(() {
+      _userRole = role; // Store it in the state to be used in the UI
+    });
+  }
 
+  @override
+  void initState() {
+    super.initState();
+    getUserRole(); // Fetch the user role when the widget initializes
+  }
   @override
   Widget build(BuildContext context) {
     // Get the current user from Firebase
     User? currentUser = _auth.currentUser;
+    
 
     // Fallback values if user info is not available
     String userName = currentUser?.displayName ?? 'No Name';
     String userEmail = currentUser?.email ?? 'No Email';
-    String userRole = 'Admin'; // You can replace it with data from Firestore
+    String userRole = _userRole??"loading..."; // You can replace it with data from Firestore
     int completedTasks = 25; // Example static data; Fetch from database
 
     return Scaffold(
