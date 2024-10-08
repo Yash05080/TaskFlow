@@ -57,6 +57,7 @@ class _FreelancingboardState extends State<Freelancingboard> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
+      
       body: SafeArea(
           child: Center(
         child: Column(
