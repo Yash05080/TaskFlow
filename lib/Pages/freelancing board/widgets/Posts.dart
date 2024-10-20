@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/functions/likebutton.dart';
+import 'package:corporate_manager/Pages/freelancing%20board/widgets/comments.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -130,14 +131,56 @@ class _PostSectionState extends State<PostSection> {
                       //button
                       LikeButton(isLiked: isLiked, onTap: toggleLike),
 
-                      SizedBox(width: 8,),
+                      SizedBox(
+                        width: 6,
+                      ),
 
                       //like count
                       Text(widget.likes.length.toString())
                     ],
-                  )
+                  ),
+
+                  SizedBox(
+                    width: 15,
+                  ),
+
+
+
+
+
+// use sub collection comments in the collection user posts
+
+
+
 
                   //Comment Button
+                  GestureDetector(
+                      onTap: () {
+                        showBottomSheet(
+                          backgroundColor: Colors.transparent,
+                          context: context,
+                          builder: (context) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: DraggableScrollableSheet(
+                                maxChildSize: 0.5,
+                                initialChildSize: 0.5,
+                                minChildSize: 0.2,
+                                builder: (context, ScrollController) {
+                                  return Comments();
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Icon(
+                        Icons.mode_comment_outlined,
+                        color: Colors.grey,
+                        size: 28,
+                      )),
                 ],
               )
             ],

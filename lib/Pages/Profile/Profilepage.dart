@@ -1,3 +1,4 @@
+import 'package:corporate_manager/Pages/Profile/feature%20pages/PostHistory.dart';
 import 'package:corporate_manager/Pages/Profile/feature%20pages/Updateprofile.dart';
 import 'package:corporate_manager/Pages/Profile/widgets/logoutbutton.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.dart';
@@ -74,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Icons.comment,
                       () {
                         // Navigate to the freelancing comments page
-                        Navigator.pushNamed(context, '/freelancing-comments');
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>PostHistory()));
                       },
                     ),
                     _buildProfileOption(

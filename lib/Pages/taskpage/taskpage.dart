@@ -31,6 +31,10 @@ class _TaskPageState extends State<TaskPage> {
     return null;
   }
 
+  // make a detailed task page where when we click on the task it opens
+  // up a window where all the details of the task is shown as well as
+  // a way where he can report or update the progress.
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
