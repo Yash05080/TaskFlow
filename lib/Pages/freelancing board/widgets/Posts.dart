@@ -11,14 +11,17 @@ class PostSection extends StatefulWidget {
   final String role;
   final String postId;
   final List<String> likes;
+  final int commentCount; // Add this line
 
-  const PostSection(
-      {super.key,
-      required this.message,
-      required this.user,
-      required this.role,
-      required this.likes,
-      required this.postId});
+  const PostSection({
+    super.key,
+    required this.message,
+    required this.user,
+    required this.role,
+    required this.likes,
+    required this.postId,
+    required this.commentCount,
+  });
 
   @override
   State<PostSection> createState() => _PostSectionState();
@@ -144,14 +147,7 @@ class _PostSectionState extends State<PostSection> {
                     width: 15,
                   ),
 
-
-
-
-
 // use sub collection comments in the collection user posts
-
-
-
 
                   //Comment Button
                   GestureDetector(
@@ -169,7 +165,8 @@ class _PostSectionState extends State<PostSection> {
                                 initialChildSize: 0.5,
                                 minChildSize: 0.2,
                                 builder: (context, ScrollController) {
-                                  return Comments();
+                                  return Comments(
+                                      postId: widget.postId); // Pass the postId
                                 },
                               ),
                             );
@@ -181,6 +178,13 @@ class _PostSectionState extends State<PostSection> {
                         color: Colors.grey,
                         size: 28,
                       )),
+
+                  SizedBox(
+                    width: 6,
+                  ),
+
+                  //comment count
+                  Text(widget.commentCount.toString())
                 ],
               )
             ],
