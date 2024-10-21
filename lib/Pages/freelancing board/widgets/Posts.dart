@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corporate_manager/Pages/freelancing%20board/functions/deletebutton.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/functions/likebutton.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/functions/timeformatter.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/widgets/comments.dart';
@@ -63,6 +64,57 @@ class _PostSectionState extends State<PostSection> {
     }
   }
 
+  // Delete post
+
+  void deletePost() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Delete Post"),
+        content: Text("are you sure you want to delete this post?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("CANCEL"),
+          ),
+          TextButton(
+              onPressed: () async {
+                //delete the comments from firestore first
+                final commentDocs = await FirebaseFirestore.instance
+                    .collection('User Posts')
+                    .doc(widget.postId)
+                    .collection('Comments')
+                    .get();
+
+                for (var doc in commentDocs.docs) {
+                  await FirebaseFirestore.instance
+                      .collection('User Posts')
+                      .doc(widget.postId)
+                      .collection('Comments')
+                      .doc(doc.id)
+                      .delete();
+                }
+
+                //then delete the post
+                FirebaseFirestore.instance
+                    .collection('User Posts')
+                    .doc(widget.postId)
+                    .delete()
+                    .then((value) => print("post deleted"))
+                    .catchError(
+                        (error) => print("failed to delete the post: $error"));
+
+                // dismiss the dialog box
+                Navigator.pop(context);
+              },
+              child: Text("DELETE",style: TextStyle(color: Colors.red),))
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -83,35 +135,42 @@ class _PostSectionState extends State<PostSection> {
             children: [
               // User section
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  //Profile Picture
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.brown),
-                      borderRadius: BorderRadius.circular(25),
-                      color: HexColor("F1E0D0"),
-                    ),
-                    child: Icon(Icons.person),
-                  ),
-
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      Text(
-                        widget.user,
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 72, 48, 24),
-                          fontWeight: FontWeight.bold,
+                      //Profile Picture
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.brown),
+                          borderRadius: BorderRadius.circular(25),
+                          color: HexColor("F1E0D0"),
                         ),
+                        child: Icon(Icons.person),
                       ),
-                      Text(widget.role),
+
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.user,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 72, 48, 24),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(widget.role),
+                        ],
+                      ),
                     ],
                   ),
+                  if (widget.user == currentUser.email)
+                    Deletebutton(onTap: deletePost),
                 ],
               ),
               const SizedBox(height: 8.0), // Add space between user and message

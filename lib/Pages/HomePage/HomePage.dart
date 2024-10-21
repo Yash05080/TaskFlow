@@ -30,7 +30,7 @@ class _MyDashBoardState extends State<MyDashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('DashBoard')),
+      //appBar: AppBar(title: const Text('DashBoard')),
       body: FutureBuilder<String?>(
         future: getUserRole(),
         builder: (context, snapshot) {

@@ -1,3 +1,4 @@
+import 'package:corporate_manager/Pages/freelancing%20board/functions/timeformatter.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -133,9 +134,8 @@ class _CommentsState extends State<Comments> {
                               subtitle: Text(commentData['comment']),
                               trailing: Text(
                                 commentData['timestamp'] != null
-                                    ? (commentData['timestamp'] as Timestamp)
-                                        .toDate()
-                                        .toString()
+                                    ? (formatTimestamp(
+                                        commentData['timestamp']))
                                     : 'Just now',
                                 style: const TextStyle(fontSize: 10),
                               ),
