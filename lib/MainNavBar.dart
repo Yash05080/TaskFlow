@@ -21,7 +21,7 @@ class _NavigationBarState extends State<MainNavBar> {
     const TaskPage(),
     const MyDashBoard(),
     const Freelancingboard(),
-   ProfilePage(),
+    ProfilePage(),
   ];
 
   @override
@@ -59,7 +59,7 @@ class _NavigationBarState extends State<MainNavBar> {
             buildNavItem(0, Icons.message, "Chat"),
             buildNavItem(1, Icons.check_box, "Tasks"),
             const SizedBox(width: 17), // Space for the floating action button
-            buildNavItem(3, Icons.add_business, "Freelance"),
+            buildNavItem(3, Icons.add_business, "Forum"),
             buildNavItem(4, Icons.person_outline, "Profile"),
           ],
         ),

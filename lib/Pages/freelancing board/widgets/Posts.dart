@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/functions/likebutton.dart';
+import 'package:corporate_manager/Pages/freelancing%20board/functions/timeformatter.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/widgets/comments.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class PostSection extends StatefulWidget {
   final String postId;
   final List<String> likes;
   final int commentCount; // Add this line
+  final Timestamp timestamp1;
 
   const PostSection({
     super.key,
@@ -21,6 +23,7 @@ class PostSection extends StatefulWidget {
     required this.likes,
     required this.postId,
     required this.commentCount,
+    required this.timestamp1,
   });
 
   @override
@@ -127,64 +130,84 @@ class _PostSectionState extends State<PostSection> {
 
               //post options: like, comment
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  //Like Button
                   Row(
                     children: [
-                      //button
-                      LikeButton(isLiked: isLiked, onTap: toggleLike),
+                      //Like Button
+                      Row(
+                        children: [
+                          //button
+                          LikeButton(isLiked: isLiked, onTap: toggleLike),
+
+                          SizedBox(
+                            width: 6,
+                          ),
+
+                          //like count
+                          Text(
+                            widget.likes.length.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: Colors.grey[700]),
+                          )
+                        ],
+                      ),
+
+                      SizedBox(
+                        width: 15,
+                      ),
+
+                      //Comment Button
+                      GestureDetector(
+                          onTap: () {
+                            showBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              context: context,
+                              builder: (context) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom),
+                                  child: DraggableScrollableSheet(
+                                    maxChildSize: 0.5,
+                                    initialChildSize: 0.5,
+                                    minChildSize: 0.2,
+                                    builder: (context, ScrollController) {
+                                      return Comments(
+                                          postId:
+                                              widget.postId); // Pass the postId
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Icon(
+                            Icons.mode_comment_outlined,
+                            color: Colors.grey[600],
+                            size: 28,
+                          )),
 
                       SizedBox(
                         width: 6,
                       ),
 
-                      //like count
-                      Text(widget.likes.length.toString())
+                      //comment count
+                      Text(
+                        widget.commentCount.toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: Colors.grey[700]),
+                      )
                     ],
                   ),
-
-                  SizedBox(
-                    width: 15,
+                  Text(
+                    formatTimestamp(widget.timestamp1),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w800, color: Colors.grey[700]),
                   ),
-
-// use sub collection comments in the collection user posts
-
-                  //Comment Button
-                  GestureDetector(
-                      onTap: () {
-                        showBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          context: context,
-                          builder: (context) {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom),
-                              child: DraggableScrollableSheet(
-                                maxChildSize: 0.5,
-                                initialChildSize: 0.5,
-                                minChildSize: 0.2,
-                                builder: (context, ScrollController) {
-                                  return Comments(
-                                      postId: widget.postId); // Pass the postId
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: Icon(
-                        Icons.mode_comment_outlined,
-                        color: Colors.grey,
-                        size: 28,
-                      )),
-
-                  SizedBox(
-                    width: 6,
-                  ),
-
-                  //comment count
-                  Text(widget.commentCount.toString())
                 ],
               )
             ],

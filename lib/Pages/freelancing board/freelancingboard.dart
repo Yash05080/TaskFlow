@@ -146,6 +146,7 @@ class _FreelancingboardState extends State<Freelancingboard> {
                               postId: post.id,
                               likes: List<String>.from(post['Likes'] ?? []),
                               commentCount: post['CommentCount'] ?? 0,
+                              timestamp1: post['TimeStamp'],
                             ),
                           );
                         },

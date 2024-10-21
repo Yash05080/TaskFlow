@@ -14,7 +14,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? _userRole;
-  
+
   Future<void> getUserRole() async {
     UserService userService = UserService();
     String? role = await userService.fetchUserRole(); // Fetch the user role
@@ -28,16 +28,17 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     getUserRole(); // Fetch the user role when the widget initializes
   }
+
   @override
   Widget build(BuildContext context) {
     // Get the current user from Firebase
     User? currentUser = _auth.currentUser;
-    
 
     // Fallback values if user info is not available
     String userName = currentUser?.displayName ?? 'No Name';
     String userEmail = currentUser?.email ?? 'No Email';
-    String userRole = _userRole??"loading..."; // You can replace it with data from Firestore
+    String userRole = _userRole ??
+        "loading..."; // You can replace it with data from Firestore
     int completedTasks = 25; // Example static data; Fetch from database
 
     return Scaffold(
@@ -48,22 +49,20 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //profile pic
-              Center(
-                  child: Container(
-                height: 200,
-                width: 200,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(500),
-                    color: Colors.indigo),
-              )),
+              const Center(
+                child: CircleAvatar(
+                  radius: 100,
+                  backgroundImage: AssetImage('assets/images/demo.JPG'),
+                ),
+              ),
 
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               // User Details Section
               _buildUserInfo(userName, userEmail, userRole, completedTasks),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Options List
               Expanded(
@@ -75,7 +74,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       Icons.comment,
                       () {
                         // Navigate to the freelancing comments page
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>PostHistory()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const PostHistory()));
                       },
                     ),
                     _buildProfileOption(
@@ -126,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 builder: (context) => UpdateProfilePage()));
                       },
                     ),
-                    LogOutButton(),
+                    const LogOutButton(),
                   ],
                 ),
               ),
@@ -145,22 +147,22 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Text(
           'Name: $name',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           'Email: $email',
           style: TextStyle(fontSize: 16, color: Colors.grey[600]),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           'Role: $role',
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           'Completed Tasks: $completedTasks',
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
         ),
       ],
     );
