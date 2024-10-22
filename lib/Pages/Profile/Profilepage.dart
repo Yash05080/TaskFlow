@@ -5,6 +5,7 @@ import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -21,6 +22,25 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _userRole = role; // Store it in the state to be used in the UI
     });
+  }
+
+  void _sendEmail() async {
+    final String email = 'yash05080@gmail.com';
+    final String subject = 'Subject Here'; // You can set a default subject
+    final String body = 'Message Here'; // You can set a default message
+
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: email,
+      query: Uri.encodeFull('subject=$subject&body=$body'),
+    );
+
+    // Launch the email app
+    if (await canLaunch(emailUri.toString())) {
+      await launch(emailUri.toString());
+    } else {
+      throw 'Could not launch $emailUri';
+    }
   }
 
   @override
@@ -86,7 +106,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       Icons.stars,
                       () {
                         // Navigate to the points page
-                        Navigator.pushNamed(context, '/my-points');
                       },
                     ),
                     _buildProfileOption(
@@ -94,8 +113,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Report',
                       Icons.report,
                       () {
+                       // _sendEmail();
                         // Navigate to report page
-                        Navigator.pushNamed(context, '/report');
                       },
                     ),
                     _buildProfileOption(
@@ -104,7 +123,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       Icons.apps,
                       () {
                         // Navigate to my applications page
-                        Navigator.pushNamed(context, '/my-applications');
                       },
                     ),
                     _buildProfileOption(
@@ -113,7 +131,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       Icons.history,
                       () {
                         // Navigate to tasks history page
-                        Navigator.pushNamed(context, '/tasks-history');
                       },
                     ),
                     _buildProfileOption(
