@@ -1,5 +1,6 @@
 import 'package:corporate_manager/Pages/Profile/feature%20pages/PostHistory.dart';
 import 'package:corporate_manager/Pages/Profile/feature%20pages/Updateprofile.dart';
+import 'package:corporate_manager/Pages/Profile/feature%20pages/taskhistory.dart';
 import 'package:corporate_manager/Pages/Profile/widgets/logoutbutton.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.dart';
 import 'package:flutter/material.dart';
@@ -102,6 +103,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     _buildProfileOption(
                       context,
+                      'Tasks History',
+                      Icons.task_alt,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Taskhistory()));
+                        // Navigate to tasks history page
+                      },
+                    ),
+                    _buildProfileOption(
+                      context,
                       'My Points',
                       Icons.stars,
                       () {
@@ -125,14 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         // Navigate to my applications page
                       },
                     ),
-                    _buildProfileOption(
-                      context,
-                      'Tasks History',
-                      Icons.history,
-                      () {
-                        // Navigate to tasks history page
-                      },
-                    ),
+                  
                     _buildProfileOption(
                       context,
                       'Update Profile',
@@ -145,6 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 builder: (context) => UpdateProfilePage()));
                       },
                     ),
+                    SizedBox(height: 15,),
                     const LogOutButton(),
                   ],
                 ),

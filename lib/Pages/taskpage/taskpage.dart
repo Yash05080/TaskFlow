@@ -39,7 +39,7 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Task Panel')),
+      appBar: AppBar(title: const Text('Task Panel',style: TextStyle(fontWeight: FontWeight.bold),)),
       body: FutureBuilder<String?>(
         future: getUserRole(),
         builder: (context, snapshot) {
