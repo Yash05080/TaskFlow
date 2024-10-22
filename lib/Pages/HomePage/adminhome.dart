@@ -12,7 +12,10 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Dashboard',style: TextStyle(color: Colors.brown[800]),),
+        title: Text(
+          'Admin Dashboard',
+          style: TextStyle(color: Colors.brown[800]),
+        ),
         //backgroundColor: Colors.brown[700],
       ),
       body: SingleChildScrollView(
@@ -34,13 +37,13 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                   ),
                   StatCard(
                     title: 'Tasks Assigned',
-                    count: '7',
+                    count: '4',
                     icon: Icons.assignment,
                     color: Colors.greenAccent,
                   ),
                   StatCard(
                     title: 'Completed Tasks',
-                    count: '5',
+                    count: '25',
                     icon: Icons.done,
                     color: Colors.orangeAccent,
                   ),
@@ -95,7 +98,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           ],
         ),
       ),
-      
     );
   }
 }

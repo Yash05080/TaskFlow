@@ -28,10 +28,12 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.task.title);
-    _descriptionController = TextEditingController(text: widget.task.description);
+    _descriptionController =
+        TextEditingController(text: widget.task.description);
     _priorityController = TextEditingController(text: widget.task.priority);
-    _pointsController = TextEditingController(text: widget.task.points.toString());
-    _assigneeEmailController = TextEditingController(); // Leave blank initially
+    _pointsController =
+        TextEditingController(text: widget.task.points.toString());
+    _assigneeEmailController = TextEditingController(text: widget.task.assignee); // Leave blank initially
     _statusController = TextEditingController(text: widget.task.status);
     _deadline = widget.task.deadline;
   }
@@ -49,37 +51,47 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(labelText: 'Title'),
-                validator: (value) => value!.isEmpty ? 'Please enter a title' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a title' : null,
               ),
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(labelText: 'Description'),
-                validator: (value) => value!.isEmpty ? 'Please enter a description' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a description' : null,
+                maxLines: 4, // Set maximum lines to 4
+                minLines: 1, // It will expand between 1 to 4 lines
               ),
               TextFormField(
                 controller: _priorityController,
                 decoration: const InputDecoration(labelText: 'Priority'),
-                validator: (value) => value!.isEmpty ? 'Please enter a priority' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter a priority' : null,
               ),
               TextFormField(
                 controller: _pointsController,
                 decoration: const InputDecoration(labelText: 'Points'),
-                validator: (value) => value!.isEmpty ? 'Please enter points' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter points' : null,
               ),
               TextFormField(
                 controller: _assigneeEmailController,
-                decoration: const InputDecoration(labelText: 'Assignee Email ID'),
-                validator: (value) => value!.isEmpty ? 'Please enter assignee email ID' : null,
+                decoration:
+                    const InputDecoration(labelText: 'Assignee Email ID'),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter assignee email ID' : null,
               ),
               TextFormField(
                 controller: _statusController,
                 decoration: const InputDecoration(labelText: 'Status'),
-                validator: (value) => value!.isEmpty ? 'Please enter status' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please enter status' : null,
               ),
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    String? assigneeUserId = await _taskService.getUserIdByEmail(_assigneeEmailController.text);
+                    String? assigneeUserId = await _taskService
+                        .getUserIdByEmail(_assigneeEmailController.text);
 
                     if (assigneeUserId != null) {
                       Map<String, dynamic> taskData = {
