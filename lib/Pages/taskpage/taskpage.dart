@@ -1,3 +1,4 @@
+import 'package:corporate_manager/Pages/taskpage/taskservice.dart';
 import 'package:corporate_manager/providors/taskprovider.dart';
 import 'package:corporate_manager/providors/userprovider.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,8 @@ class TaskPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => TaskDetailPage(task: task),
+                          builder: (context) => TaskDetailPage(
+                              task: task, ),
                         ),
                       );
                     },
@@ -77,8 +79,7 @@ class TaskPage extends StatelessWidget {
                       ),
                       subtitle: Text('Status: ${task.status}'),
                       trailing: Tooltip(
-                        message:
-                            "Time left: ${formatCountdown(remainingTime)}",
+                        message: "Time left: ${formatCountdown(remainingTime)}",
                         textStyle: const TextStyle(
                             color: Colors.red, fontWeight: FontWeight.bold),
                         decoration: BoxDecoration(

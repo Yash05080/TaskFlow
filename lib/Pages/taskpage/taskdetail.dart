@@ -1,14 +1,13 @@
-import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.dart';
 import 'package:corporate_manager/Pages/taskpage/taskservice.dart';
 import 'package:corporate_manager/Pages/taskpage/updatetaskpage.dart';
 import 'package:corporate_manager/models/task_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:corporate_manager/providors/userprovider.dart';
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
 
 class TaskDetailPage extends StatefulWidget {
-  final TaskService _taskService = TaskService();
   final Task task;
 
   TaskDetailPage({super.key, required this.task});
@@ -18,17 +17,27 @@ class TaskDetailPage extends StatefulWidget {
 }
 
 class _TaskDetailPageState extends State<TaskDetailPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   Duration remainingTime = const Duration();
   late Timer timer;
+  final TaskService _taskService = TaskService();
+  String? assigneeEmail;
 
   @override
   void initState() {
     super.initState();
-    getUserRole();
     updateRemainingTime();
+    fetchAssigneeEmail(); // Fetch assignee email
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       updateRemainingTime();
+    });
+  }
+
+  // Fetch the email of the assignee based on userId
+  void fetchAssigneeEmail() async {
+    final email = await _taskService.getUserEmailById(widget.task.assignee);
+    setState(() {
+      assigneeEmail =
+          email ?? "No email found"; // Fallback if email is not found
     });
   }
 
@@ -49,7 +58,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Delete Task"),
-        content: const Text("are you sure you want to delete this task before completion?"),
+        content: const Text(
+            "Are you sure you want to delete this task before completion?"),
         actions: [
           TextButton(
             onPressed: () {
@@ -58,37 +68,30 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
             child: const Text("CANCEL"),
           ),
           TextButton(
-              onPressed: () async {
-              await widget._taskService.deleteTask(widget.task.id);
-              // ignore: use_build_context_synchronously
+            onPressed: () async {
+              await _taskService.deleteTask(widget.task.id);
               Navigator.pop(context);
+              Navigator.pop(context); // Go back after deletion
             },
-              child: const Text("DELETE",style: TextStyle(color: Colors.red),))
+            child: const Text("DELETE", style: TextStyle(color: Colors.red)),
+          ),
         ],
       ),
     );
   }
-  
-  String? _userRole;
 
-  Future<void> getUserRole() async {
-    UserService userService = UserService();
-    String? role = await userService.fetchUserRole(); // Fetch the user role
-    setState(() {
-      _userRole = role; // Store it in the state to be used in the UI
-    });
-  }
-
-  
   String formatCountdown(Duration duration) {
     return '${duration.inDays}d ${duration.inHours % 24}h ${duration.inMinutes % 60}m ${duration.inSeconds % 60}s';
   }
 
   @override
   Widget build(BuildContext context) {
+    final userRole = context.watch<UserProvider>().userRole;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.task.title,style: const TextStyle(fontWeight: FontWeight.w600),),
+        title: Text(widget.task.title,
+            style: const TextStyle(fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete),
@@ -96,23 +99,19 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
           ),
         ],
       ),
-      floatingActionButton: _userRole == "Admin" || _userRole == "Manager"
-                                ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      FloatingActionButton(
-                                        onPressed:() {
-                                            // Navigate to update task page with task details
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    UpdateTaskPage(task: widget.task),
-                                              ),
-                                            );
-                                          } ,
-                                        child: const Icon(Icons.edit,size: 34,),
-                                      ),],):null,
+      floatingActionButton: userRole == "Admin" || userRole == "Manager"
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UpdateTaskPage(task: widget.task),
+                  ),
+                );
+              },
+              child: const Icon(Icons.edit, size: 34),
+            )
+          : null,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
@@ -130,7 +129,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Description',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -140,38 +140,33 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                   const Divider(),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      'Priority',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: widget.task.priority.toLowerCase() == 'high'
-                            ? Colors.red
-                            : (widget.task.priority.toLowerCase() == 'low'
-                                ? Colors.blue
-                                : Colors.black),
-                      ),
+                    title: const Text(
+                      'Assignee',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(widget.task.priority),
+                      child: Text(assigneeEmail ?? 'Loading...'),
                     ),
                   ),
                   const Divider(),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
-                      'Points',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      'Priority',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        widget.task.points.toString(),
-                        style: const TextStyle(
-                          fontSize: 24,
+                        widget.task.priority,
+                        style: TextStyle(
+                          color: widget.task.priority == 'High'
+                              ? Colors.red
+                              : Colors.blue,
                           fontWeight: FontWeight.bold,
-                          color: Colors.orange,
                         ),
                       ),
                     ),
@@ -180,26 +175,27 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
-                      'Status',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      'Points',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(widget.task.status),
+                      child: Text(widget.task.points.toString()),
                     ),
                   ),
-                
                   const Divider(),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Deadline',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        DateFormat('yyyy-MM-dd').format(widget.task.deadline),
+                        '${widget.task.deadline.day}/${widget.task.deadline.month}/${widget.task.deadline.year}',
                       ),
                     ),
                   ),

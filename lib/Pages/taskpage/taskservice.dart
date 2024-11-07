@@ -6,6 +6,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class TaskService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Method to get user email by userId
+  Future<String?> getUserEmailById(String userId) async {
+    try {
+      DocumentSnapshot snapshot = await _firestore.collection('users').doc(userId).get();
+      if (snapshot.exists) {
+        return snapshot['email']; // Assuming 'email' is the field storing user emails
+      }
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
 
   // Method to get user ID by email
   Future<String?> getUserIdByEmail(String email) async {

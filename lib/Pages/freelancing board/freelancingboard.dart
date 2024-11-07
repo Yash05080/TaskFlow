@@ -27,17 +27,13 @@ class _FreelancingboardState extends State<Freelancingboard> {
   }
 
   Future<void> initializeCommentCounts() async {
-    // Get all documents from the "User Posts" collection
     QuerySnapshot postsSnapshot =
         await FirebaseFirestore.instance.collection("User Posts").get();
 
     for (var post in postsSnapshot.docs) {
-      // Try to access CommentCount, if it throws an error, we add it
       try {
-        // If CommentCount exists, do nothing
         post.get('CommentCount');
       } catch (e) {
-        // If accessing the field throws an error, it means it doesn't exist
         await FirebaseFirestore.instance
             .collection("User Posts")
             .doc(post.id)
@@ -50,7 +46,7 @@ class _FreelancingboardState extends State<Freelancingboard> {
     UserService userService = UserService();
     String? role = await userService.fetchUserRole();
 
-    if (role != null) {
+    if (role != null && mounted) {
       setState(() {
         _userRole = role;
       });
@@ -65,18 +61,19 @@ class _FreelancingboardState extends State<Freelancingboard> {
         'Role': _userRole,
         'TimeStamp': Timestamp.now(),
         'Likes': [],
-        'CommentCount': 0, // Initialize CommentCount to 0
+        'CommentCount': 0,
       });
-      setState(() {
-        textController.clear();
-      });
+      if (mounted) {
+        setState(() {
+          textController.clear();
+        });
+      }
     }
   }
 
-  // Open the draggable comments section (bottom sheet)
   void _openBottomSheet(BuildContext context, String postId) {
     if (_isBottomSheetOpen) {
-      _bottomSheetController?.close(); // Close if already open
+      _bottomSheetController?.close();
     } else {
       _bottomSheetController = showBottomSheet(
         context: context,
@@ -86,22 +83,35 @@ class _FreelancingboardState extends State<Freelancingboard> {
             minChildSize: 0.3,
             initialChildSize: 0.5,
             builder: (BuildContext context, ScrollController scrollController) {
-              return Comments(
-                  postId: postId); // This should be your comments widget
+              return Comments(postId: postId);
             },
           );
         },
       );
-      setState(() {
-        _isBottomSheetOpen = true;
-      });
+
+      if (mounted) {
+        setState(() {
+          _isBottomSheetOpen = true;
+        });
+      }
 
       _bottomSheetController?.closed.then((value) {
-        setState(() {
-          _isBottomSheetOpen = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isBottomSheetOpen = false;
+          });
+        }
       });
     }
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    if (_isBottomSheetOpen) {
+      _bottomSheetController?.close();
+    }
+    super.dispose();
   }
 
   @override
@@ -115,7 +125,6 @@ class _FreelancingboardState extends State<Freelancingboard> {
       ),
       body: SafeArea(
         child: GestureDetector(
-          // Close the comments section when scrolling outside the bottom sheet
           onPanUpdate: (details) {
             if (_isBottomSheetOpen && details.delta.dy > 0) {
               _bottomSheetController?.close();
@@ -160,8 +169,6 @@ class _FreelancingboardState extends State<Freelancingboard> {
                   },
                 ),
               ),
-
-              // Post textfield
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0, top: 8),
                 child: Align(
@@ -210,7 +217,7 @@ class _FreelancingboardState extends State<Freelancingboard> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
