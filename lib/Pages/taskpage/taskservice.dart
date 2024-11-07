@@ -1,7 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:corporate_manager/models/task_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TaskService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -26,10 +27,16 @@ class TaskService {
     }
   }
 
+  // Fetch current user ID (make sure it's implemented)
+  Future<String?> getCurrentUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    return user?.uid;
+  }
+
   // Method to create a new task
-  Future<void> createTask(Map<String, dynamic> taskData) async {
+  Future<void> createTask(Task task) async {
     try {
-      await _firestore.collection('tasks').add(taskData);
+      await _firestore.collection('tasks').add(task.toMap());
     } catch (e) {
       print(e);
     }
@@ -58,4 +65,3 @@ class TaskService {
     return _firestore.collection('tasks').snapshots();
   }
 }
-

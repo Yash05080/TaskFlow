@@ -3,20 +3,15 @@ import 'package:corporate_manager/Pages/Profile/Profilepage.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/freelancingboard.dart';
 import 'package:corporate_manager/Pages/messenging/ChatPage.dart';
 import 'package:corporate_manager/Pages/taskpage/taskpage.dart';
-
+import 'package:corporate_manager/providors/pageprovidor.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
 
-class MainNavBar extends StatefulWidget {
-  const MainNavBar({super.key});
+class MainNavBar extends StatelessWidget {
+  MainNavBar({super.key});
 
-  @override
-  State<StatefulWidget> createState() => _NavigationBarState();
-}
-
-class _NavigationBarState extends State<MainNavBar> {
-  int currentIndex = 2;
-  List screens = [
+  final List<Widget> screens = [
     const ChatPage(),
     const TaskPage(),
     const MyDashBoard(),
@@ -26,13 +21,14 @@ class _NavigationBarState extends State<MainNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    final pageProvider = Provider.of<PageProvider>(context);
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       floatingActionButton: FloatingActionButton(
         heroTag: 'HomeTag',
         onPressed: () {
-          setState(() {
-            currentIndex = 2;
-          });
+          pageProvider.updateIndex(2); // Set default to dashboard
         },
         shape: const CircleBorder(),
         splashColor: Colors.indigo,
@@ -56,24 +52,26 @@ class _NavigationBarState extends State<MainNavBar> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            buildNavItem(0, Icons.message, "Chat"),
-            buildNavItem(1, Icons.check_box, "Tasks"),
+            buildNavItem(context, 0, Icons.message, "Chat"),
+            buildNavItem(context, 1, Icons.check_box, "Tasks"),
             const SizedBox(width: 17), // Space for the floating action button
-            buildNavItem(3, Icons.add_business, "Forum"),
-            buildNavItem(4, Icons.person_outline, "Profile"),
+            buildNavItem(context, 3, Icons.add_business, "Forum"),
+            buildNavItem(context, 4, Icons.person_outline, "Profile"),
           ],
         ),
       ),
-      body: screens[currentIndex],
+      body: screens[pageProvider.selectedIndex],
     );
   }
 
-  Widget buildNavItem(int index, IconData icon, String label) {
+  Widget buildNavItem(
+      BuildContext context, int index, IconData icon, String label) {
+    final pageProvider = Provider.of<PageProvider>(context, listen: false);
+    final isSelected = pageProvider.selectedIndex == index;
+
     return GestureDetector(
       onTap: () {
-        setState(() {
-          currentIndex = index;
-        });
+        pageProvider.updateIndex(index);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -83,18 +81,15 @@ class _NavigationBarState extends State<MainNavBar> {
             Icon(
               icon,
               size: 28,
-              color: currentIndex == index
-                  ? HexColor("0b1623")
-                  : Colors.grey.shade400,
+              color: isSelected ? HexColor("0b1623") : Colors.grey.shade400,
             ),
             Text(
               label,
               style: TextStyle(
-                  color: currentIndex == index
-                      ? HexColor("0b1623")
-                      : Colors.grey.shade400,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold),
+                color: isSelected ? HexColor("0b1623") : Colors.grey.shade400,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

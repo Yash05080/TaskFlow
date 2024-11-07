@@ -126,19 +126,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Report',
                       Icons.report,
                       () {
-                       // _sendEmail();
+                        // _sendEmail();
                         // Navigate to report page
                       },
                     ),
-                    _buildProfileOption(
-                      context,
-                      'My Applications',
-                      Icons.apps,
-                      () {
-                        // Navigate to my applications page
-                      },
-                    ),
-                  
                     _buildProfileOption(
                       context,
                       'Update Profile',
@@ -151,7 +142,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 builder: (context) => UpdateProfilePage()));
                       },
                     ),
-                    SizedBox(height: 15,),
+                    SizedBox(
+                      height: 15,
+                    ),
                     const LogOutButton(),
                   ],
                 ),

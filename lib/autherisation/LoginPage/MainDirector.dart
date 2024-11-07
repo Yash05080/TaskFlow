@@ -19,7 +19,7 @@ class _MainDirectorState extends State<MainDirector> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const MainNavBar();
+            return  MainNavBar();
           } else {
             return const AuthPage();
           }

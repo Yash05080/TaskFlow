@@ -1,10 +1,18 @@
 import 'package:corporate_manager/models/task_model.dart';
+import 'package:corporate_manager/providors/taskstateprovider.dart';
 import 'package:flutter/material.dart';
-import 'taskservice.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
-class CreateTaskPage extends StatelessWidget {
-  final TaskService _taskService = TaskService();
+import 'taskservice.dart';
+
+class CreateTaskPage extends StatefulWidget {
+  const CreateTaskPage({super.key});
+
+  @override
+  _CreateTaskPageState createState() => _CreateTaskPageState();
+}
+
+class _CreateTaskPageState extends State<CreateTaskPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -14,26 +22,26 @@ class CreateTaskPage extends StatelessWidget {
   final _statusController = TextEditingController();
   DateTime? _deadline;
 
-  CreateTaskPage({super.key});
-
-  Future<String?> getUserId() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    return user?.uid;
-  }
-
+  // Date picker for selecting the deadline
   Future<void> _selectDeadline(BuildContext context) async {
     DateTime currentDate = DateTime.now();
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: currentDate,
-      firstDate: currentDate, // No past dates allowed
-      lastDate: DateTime(
-          currentDate.year + 5), // Allow selecting up to 5 years in the future
+      firstDate: currentDate,
+      lastDate: DateTime(currentDate.year + 5),
     );
 
     if (selectedDate != null && selectedDate != _deadline) {
-      _deadline = selectedDate;
+      setState(() {
+        _deadline = selectedDate;
+      });
     }
+  }
+
+  // Format deadline date
+  String _formatDeadline(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -60,7 +68,9 @@ class CreateTaskPage extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 15.0, horizontal: 10.0),
+                    vertical: 15.0,
+                    horizontal: 10.0,
+                  ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter a title' : null,
@@ -81,12 +91,14 @@ class CreateTaskPage extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 15.0, horizontal: 10.0),
+                    vertical: 15.0,
+                    horizontal: 10.0,
+                  ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter a description' : null,
-                maxLines: 4, // Set maximum lines to 4
-                minLines: 1, // It will expand between 1 to 4 lines
+                maxLines: 4,
+                minLines: 1,
               ),
               const SizedBox(height: 16.0), // Space between fields
 
@@ -104,7 +116,9 @@ class CreateTaskPage extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 15.0, horizontal: 10.0),
+                    vertical: 15.0,
+                    horizontal: 10.0,
+                  ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter a priority' : null,
@@ -125,7 +139,9 @@ class CreateTaskPage extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 15.0, horizontal: 10.0),
+                    vertical: 15.0,
+                    horizontal: 10.0,
+                  ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter points' : null,
@@ -146,7 +162,9 @@ class CreateTaskPage extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 15.0, horizontal: 10.0),
+                    vertical: 15.0,
+                    horizontal: 10.0,
+                  ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter assignee email ID' : null,
@@ -167,7 +185,9 @@ class CreateTaskPage extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 15.0, horizontal: 10.0),
+                    vertical: 15.0,
+                    horizontal: 10.0,
+                  ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter status' : null,
@@ -183,8 +203,7 @@ class CreateTaskPage extends StatelessWidget {
                     Text(
                       _deadline == null
                           ? 'Select Deadline'
-                          : 'Deadline: ${_deadline!.toLocal()}'
-                              .split(' ')[0], // Only show the date part
+                          : 'Deadline: ${_formatDeadline(_deadline!)}',
                       style: const TextStyle(fontSize: 16),
                     ),
                     IconButton(
@@ -194,48 +213,56 @@ class CreateTaskPage extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 16.0), // Space between fields
+              const SizedBox(height: 32.0), // Space before submit button
 
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    // Ensure the deadline is set before creating the task
-                    if (_deadline == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please select a deadline'),
-                        ),
-                      );
-                      return;
-                    }
-                    String? userId = await getUserId();
-                    String? assigneeUserId = await _taskService
-                        .getUserIdByEmail(_assigneeEmailController.text);
+              Consumer<TaskState>(
+                builder: (context, taskState, _) => ElevatedButton(
+                  onPressed: taskState.isLoading
+                      ? null
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            String? userId = await taskState.getUserId();
+                            String? assigneeUserId =
+                                await TaskService().getUserIdByEmail(
+                              _assigneeEmailController.text,
+                            );
 
-                    if (assigneeUserId != null) {
-                      Task task = Task(
-                        id: '',
-                        title: _titleController.text,
-                        description: _descriptionController.text,
-                        priority: _priorityController.text,
-                        deadline: _deadline!,
-                        points: int.parse(_pointsController.text),
-                        assignee: assigneeUserId,
-                        status: _statusController.text,
-                        createdBy: userId!,
-                      );
+                            if (assigneeUserId != null &&
+                                assigneeUserId.isNotEmpty) {
+                              Task task = Task(
+                                id: '', // Assuming the ID is auto-generated when the task is created
+                                title: _titleController.text,
+                                description: _descriptionController.text,
+                                priority: _priorityController.text,
+                                points: int.parse(_pointsController.text),
+                                assignee:
+                                    assigneeUserId, // Pass the fetched assignee ID
+                                status: _statusController.text,
+                                deadline:
+                                    _deadline!, // Ensure this is a DateTime
+                                createdBy:
+                                    userId ?? '', // Handle if user ID is null
+                              );
 
-                      await _taskService.createTask(task.toMap());
-                      Navigator.pop(context);
-                    } else {
-                      // Handle the case where the user is not found
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('User not found'),
-                      ));
-                    }
-                  }
-                },
-                child: const Text('Create Task'),
+                              // Create the task
+                              await taskState.createTask(task);
+
+                              if (!taskState.isLoading) {
+                                Navigator.pop(context);
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Assignee not found'),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  child: taskState.isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Create Task'),
+                ),
               ),
             ],
           ),

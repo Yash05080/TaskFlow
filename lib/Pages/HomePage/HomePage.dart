@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.dart';
+import 'package:corporate_manager/providors/userprovider.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MyDashBoard extends StatefulWidget {
   const MyDashBoard({super.key});
@@ -12,28 +14,13 @@ class MyDashBoard extends StatefulWidget {
 }
 
 class _MyDashBoardState extends State<MyDashBoard> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String _userRole = 'User';
+  
 
-  Future<void> getUserRole() async {
-    UserService userService = UserService();
-    String? role = await userService.fetchUserRole(); // Fetch the user role
-    setState(() {
-      _userRole = role!; // Store it in the state to be used in the UI
-    });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    getUserRole();
-
-    super.initState();
-  }
+  
 
   @override
   Widget build(BuildContext context) {
+    final _userRole = Provider.of<UserProvider>(context).userRole;
     return Scaffold(
       appBar: AppBar(
         title: Text(

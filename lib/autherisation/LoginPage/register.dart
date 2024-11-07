@@ -245,7 +245,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 TextSpan(
                                     text: "Login Now",
                                     style: TextStyle(
-                                        color: HexColor("214365"),
+                                        color: HexColor("800000"),
                                         fontWeight: FontWeight.w600))
                               ]),
                             ),
