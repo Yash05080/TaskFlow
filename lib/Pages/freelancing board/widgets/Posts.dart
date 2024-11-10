@@ -70,14 +70,14 @@ class _PostSectionState extends State<PostSection> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Delete Post"),
-        content: Text("are you sure you want to delete this post?"),
+        title: const Text("Delete Post"),
+        content: const Text("are you sure you want to delete this post?"),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("CANCEL"),
+            child: const Text("CANCEL"),
           ),
           TextButton(
               onPressed: () async {
@@ -109,7 +109,7 @@ class _PostSectionState extends State<PostSection> {
                 // dismiss the dialog box
                 Navigator.pop(context);
               },
-              child: Text("DELETE",style: TextStyle(color: Colors.red),))
+              child: const Text("DELETE",style: TextStyle(color: Colors.red),))
         ],
       ),
     );
@@ -122,7 +122,7 @@ class _PostSectionState extends State<PostSection> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: Color.fromARGB(255, 101, 67, 33),
+            color: const Color.fromARGB(255, 101, 67, 33),
           ),
           borderRadius: BorderRadius.circular(12),
           color: Colors.white,
@@ -148,10 +148,10 @@ class _PostSectionState extends State<PostSection> {
                           borderRadius: BorderRadius.circular(25),
                           color: HexColor("F1E0D0"),
                         ),
-                        child: Icon(Icons.person),
+                        child: const Icon(Icons.person),
                       ),
 
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Column(
@@ -183,7 +183,7 @@ class _PostSectionState extends State<PostSection> {
                   overflow: TextOverflow.visible,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
 
@@ -199,7 +199,7 @@ class _PostSectionState extends State<PostSection> {
                           //button
                           LikeButton(isLiked: isLiked, onTap: toggleLike),
 
-                          SizedBox(
+                          const SizedBox(
                             width: 6,
                           ),
 
@@ -213,7 +213,7 @@ class _PostSectionState extends State<PostSection> {
                         ],
                       ),
 
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
 
@@ -249,7 +249,7 @@ class _PostSectionState extends State<PostSection> {
                             size: 28,
                           )),
 
-                      SizedBox(
+                      const SizedBox(
                         width: 6,
                       ),
 

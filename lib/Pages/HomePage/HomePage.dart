@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.dart';
+
 import 'package:corporate_manager/providors/userprovider.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +29,7 @@ class _MyDashBoardState extends State<MyDashBoard> {
         //backgroundColor: Colors.brown[700],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -61,14 +60,14 @@ class _MyDashBoardState extends State<MyDashBoard> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Main Section: Freelance Feed (Recent Posts + Popular Posts)
-            Text(
+            const Text(
               'Recent Freelance Posts',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             PostCard(
               title: 'Build a Mobile App',
               description: 'Looking for a Flutter developer...',
@@ -83,10 +82,10 @@ class _MyDashBoardState extends State<MyDashBoard> {
               likes: 45,
               comments: 25,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Side Panel: Notifications / Activity Feed
-            Text(
+            const Text(
               'Your Activity Feed',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
@@ -98,10 +97,10 @@ class _MyDashBoardState extends State<MyDashBoard> {
               activity: 'Anna liked your post',
               time: '10 mins ago',
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Performance Tracker / Leaderboard
-            Text(
+            const Text(
               'Performance Metrics',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
@@ -131,16 +130,16 @@ class StatCard extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Icon(icon, size: 40, color: color),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               count,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(title),
           ],
         ),
@@ -168,31 +167,31 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(description),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Status: $status', style: TextStyle(color: Colors.grey)),
+                Text('Status: $status', style: const TextStyle(color: Colors.grey)),
                 Row(
                   children: [
-                    Icon(Icons.thumb_up, size: 16),
-                    SizedBox(width: 4),
+                    const Icon(Icons.thumb_up, size: 16),
+                    const SizedBox(width: 4),
                     Text('$likes'),
-                    SizedBox(width: 16),
-                    Icon(Icons.comment, size: 16),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 16),
+                    const Icon(Icons.comment, size: 16),
+                    const SizedBox(width: 4),
                     Text('$comments'),
                   ],
                 ),
@@ -215,7 +214,7 @@ class ActivityFeedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(Icons.notifications, color: Colors.blue),
+      leading: const Icon(Icons.notifications, color: Colors.blue),
       title: Text(activity),
       subtitle: Text(time),
     );
@@ -229,7 +228,7 @@ class PerformanceChart extends StatelessWidget {
     return Container(
       height: 200,
       color: Colors.grey[200],
-      child: Center(
+      child: const Center(
         child: Text('Performance Chart Placeholder'),
       ),
     );

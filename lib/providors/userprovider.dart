@@ -7,11 +7,26 @@ class UserProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String? _userRole;
+  User? _currentUser;
   String get userRole => _userRole ?? 'User';
+  User? get currentUser => _currentUser;
   bool _isFetchingRole = false;
 
   UserProvider() {
-    _fetchUserRole();
+    _initializeUser();
+  }
+
+  Future<void> _initializeUser() async {
+    // Set the current user
+    _currentUser = _auth.currentUser;
+
+    // Fetch user role if a user is signed in
+    if (_currentUser != null) {
+      await _fetchUserRole();
+    } else {
+      _userRole = 'Guest';
+      notifyListeners();
+    }
   }
 
   Future<void> _fetchUserRole() async {
@@ -20,11 +35,10 @@ class UserProvider with ChangeNotifier {
     _isFetchingRole = true;
 
     try {
-      final User? user = _auth.currentUser;
-      if (user != null) {
+      if (_currentUser != null) {
         DocumentSnapshot userDoc = await _firestore
             .collection('users')
-            .doc(user.uid)
+            .doc(_currentUser!.uid)
             .get();
 
         if (userDoc.exists && userDoc['role'] != null) {
