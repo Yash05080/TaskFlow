@@ -59,11 +59,15 @@ class _ChatpageState extends State<ChatPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatRoom(receiverEmail: userData["email"]),
+            builder: (context) => ChatRoom(
+              receiverEmail: userData["email"],
+              receiverID: userData["uid"],
+            ),
           ),
         );
       },
       text: userData["email"],
+      role: userData["role"],
     );
   }
 }

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class Usertile extends StatelessWidget {
   final String text;
+  final String role;
   final void Function()? ontap;
-  const Usertile({super.key, required this.ontap, required this.text});
+  const Usertile(
+      {super.key, required this.ontap, required this.text, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +13,8 @@ class Usertile extends StatelessWidget {
       onTap: ontap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 24), // Larger padding for a substantial look
+            vertical: 16,
+            horizontal: 10), // Larger padding for a substantial look
         margin: const EdgeInsets.symmetric(
             vertical: 12, horizontal: 16), // Consistent margin for spacing
         decoration: BoxDecoration(
@@ -30,21 +32,33 @@ class Usertile extends StatelessWidget {
           ],
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min, // Allow Row to wrap content
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(Icons.person,
-                color: Colors.blueGrey, size: 32), // Larger icon for presence
-            const SizedBox(width: 16), // Spacing between icon and text
-            Expanded(
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+            Row(
+              mainAxisSize:
+                  MainAxisSize.min, // Wrap content within inner Row too
+              children: [
+                Icon(Icons.person,
+                    color: Colors.blueGrey,
+                    size: 32), // Larger icon for presence
+                const SizedBox(width: 16), // Spacing between icon and text
+                Flexible(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.brown[800],
+                    ),
+                    overflow:
+                        TextOverflow.ellipsis, // Handle long text gracefully
+                  ),
                 ),
-                overflow: TextOverflow.ellipsis, // Handle long text gracefully
-              ),
+              ],
             ),
+            const SizedBox(width: 8), // Space between text and role
+            Text(role),
           ],
         ),
       ),
