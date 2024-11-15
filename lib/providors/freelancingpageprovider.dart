@@ -23,13 +23,16 @@ class FreelanceBoardProvider with ChangeNotifier {
   }
 
   Future<void> initializeCommentCounts() async {
-    QuerySnapshot postsSnapshot = await _firestore.collection("User Posts").get();
+    QuerySnapshot postsSnapshot =
+        await _firestore.collection("User Posts").get();
 
     for (var post in postsSnapshot.docs) {
-      try {
-        post.get('CommentCount');
-      } catch (e) {
-        await _firestore.collection("User Posts").doc(post.id).update({'CommentCount': 0});
+      final postData = post.data() as Map<String, dynamic>?; // Cast to Map
+      if (postData != null && !postData.containsKey('CommentCount')) {
+        await _firestore
+            .collection("User Posts")
+            .doc(post.id)
+            .update({'CommentCount': 0});
       }
     }
     notifyListeners();
@@ -38,7 +41,8 @@ class FreelanceBoardProvider with ChangeNotifier {
   Future<void> _fetchUserRole() async {
     final user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot snapshot = await _firestore.collection("users").doc(user.uid).get();
+      DocumentSnapshot snapshot =
+          await _firestore.collection("users").doc(user.uid).get();
       if (snapshot.exists) {
         _userRole = snapshot["role"] ?? "Employee";
       }
@@ -46,19 +50,20 @@ class FreelanceBoardProvider with ChangeNotifier {
     }
   }
 
-  void postMessage() {
-    if (textController.text.isNotEmpty) {
-      _firestore.collection("User Posts").add({
-        'UserEmail': _auth.currentUser?.email,
-        'Message': textController.text,
-        'Role': _userRole,
-        'TimeStamp': Timestamp.now(),
-        'Likes': [],
-        'CommentCount': 0,
-      });
-      textController.clear();
-      notifyListeners();
-    }
+  Future<void> postMessage() async {
+    if (textController.text.trim().isEmpty) return;
+
+    final currentUser = _auth.currentUser!;
+    await _firestore.collection("User Posts").add({
+      'UserEmail': currentUser.email,
+      'Message': textController.text.trim(),
+      'Role': _userRole,
+      'TimeStamp': Timestamp.now(),
+      'Likes': [],
+      'CommentCount': 0,
+    });
+    textController.clear();
+    notifyListeners();
   }
 
   void openBottomSheet(BuildContext context, DocumentSnapshot post) {
@@ -69,9 +74,10 @@ class FreelanceBoardProvider with ChangeNotifier {
         context: context,
         builder: (context) {
           return DraggableScrollableSheet(
-            maxChildSize: 0.8,
-            minChildSize: 0.3,
-            initialChildSize: 0.5,
+            expand: true,
+            maxChildSize: 1.0,
+            minChildSize: 0.8,
+            initialChildSize: 0.9,
             builder: (BuildContext context, ScrollController scrollController) {
               return Comments(
                 postId: post.id,
@@ -96,6 +102,44 @@ class FreelanceBoardProvider with ChangeNotifier {
     if (_isBottomSheetOpen) {
       _bottomSheetController?.close();
       _isBottomSheetOpen = false;
+      notifyListeners();
+    }
+  }
+
+  // Optional: Add a method to toggle likes via Provider
+  Future<void> toggleLike(String postId, bool isLiked) async {
+    final postRef = _firestore.collection("User Posts").doc(postId);
+    final currentUserEmail = _auth.currentUser!.email;
+
+    if (isLiked) {
+      await postRef.update({
+        "Likes": FieldValue.arrayRemove([currentUserEmail]),
+      });
+    } else {
+      await postRef.update({
+        "Likes": FieldValue.arrayUnion([currentUserEmail]),
+      });
+    }
+    notifyListeners();
+  }
+
+  void addComment(String postId, String commentText) {
+    if (commentText.isNotEmpty) {
+      _firestore
+          .collection("User Posts")
+          .doc(postId)
+          .collection("Comments")
+          .add({
+        'text': commentText,
+        'user': _auth.currentUser?.email,
+        'timestamp': Timestamp.now(),
+      });
+
+      // Optionally update the comment count
+      _firestore.collection("User Posts").doc(postId).update({
+        'CommentCount': FieldValue.increment(1),
+      });
+
       notifyListeners();
     }
   }

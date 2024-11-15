@@ -1,81 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/widgets/Posts.dart';
+
 import 'package:corporate_manager/Pages/freelancing%20board/widgets/comments.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:corporate_manager/providors/freelancingpageprovider.dart';
 
-class PostHistory extends StatefulWidget {
+class PostHistory extends StatelessWidget {
   const PostHistory({super.key});
 
   @override
-  State<PostHistory> createState() => _PostHistoryState();
-}
-
-class _PostHistoryState extends State<PostHistory> {
-  final currentUser = FirebaseAuth.instance.currentUser!;
-  final textController = TextEditingController();
-  bool _isBottomSheetOpen = false;
-  PersistentBottomSheetController? _bottomSheetController;
-
-  @override
-  void initState() {
-    super.initState();
-    initializeCommentCounts();
-  }
-
-  Future<void> initializeCommentCounts() async {
-    QuerySnapshot postsSnapshot =
-        await FirebaseFirestore.instance.collection("User Posts").get();
-
-    for (var post in postsSnapshot.docs) {
-      try {
-        post.get('CommentCount');
-      } catch (e) {
-        await FirebaseFirestore.instance
-            .collection("User Posts")
-            .doc(post.id)
-            .update({'CommentCount': 0});
-      }
-    }
-  }
-
-  void _openBottomSheet(BuildContext context, DocumentSnapshot post) {
-    if (_isBottomSheetOpen) {
-      _bottomSheetController?.close();
-    } else {
-      _bottomSheetController = showBottomSheet(
-        context: context,
-        builder: (context) {
-          return DraggableScrollableSheet(
-            maxChildSize: 0.8,
-            minChildSize: 0.3,
-            initialChildSize: 0.5,
-            builder: (BuildContext context, ScrollController scrollController) {
-              return Comments(
-                postId: post.id,
-                postMessage: post['Message'],
-                postUser: post['UserEmail'],
-                postRole: post['Role'],
-                postTimestamp: post['TimeStamp'],
-              );
-            },
-          );
-        },
-      );
-      setState(() {
-        _isBottomSheetOpen = true;
-      });
-
-      _bottomSheetController?.closed.then((value) {
-        setState(() {
-          _isBottomSheetOpen = false;
-        });
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final freelanceProvider = Provider.of<FreelanceBoardProvider>(context, listen: false);
+    final currentUser = FirebaseAuth.instance.currentUser!;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -86,55 +25,53 @@ class _PostHistoryState extends State<PostHistory> {
       body: SafeArea(
         child: GestureDetector(
           onPanUpdate: (details) {
-            if (_isBottomSheetOpen && details.delta.dy > 0) {
-              _bottomSheetController?.close();
+            // Allow closing the bottom sheet via gesture
+            if (freelanceProvider.isBottomSheetOpen && details.delta.dy > 0) {
+              freelanceProvider.closeBottomSheet();
             }
           },
-          child: Column(
-            children: [
-              Expanded(
-                child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection("User Posts")
-                      .where('UserEmail', isEqualTo: currentUser.email)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final userPosts = snapshot.data!.docs;
-                      if (userPosts.isEmpty) {
-                        return const Center(
-                            child: Text("You have no posts yet."));
-                      }
-                      return ListView.builder(
-                        itemCount: userPosts.length,
-                        itemBuilder: (context, index) {
-                          final post = userPosts[index];
-                          return GestureDetector(
-                            onTap: () {
-                              _openBottomSheet(context, post);
-                            },
-                            child: PostSection(
-                              message: post['Message'],
-                              user: post['UserEmail'],
-                              role: post['Role'],
-                              postId: post.id,
-                              likes: List<String>.from(post['Likes'] ?? []),
-                              commentCount: post['CommentCount'] ?? 0,
-                              timestamp1: post['TimeStamp'],
-                            ),
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text("Error: ${snapshot.error}"));
-                    } else if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return const Center(child: CircularProgressIndicator());
-                  },
-                ),
-              ),
-            ],
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection("User Posts")
+                .where('UserEmail', isEqualTo: currentUser.email)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              }
+
+              final userPosts = snapshot.data?.docs ?? [];
+
+              if (userPosts.isEmpty) {
+                return const Center(child: Text("You have no posts yet."));
+              }
+
+              return ListView.builder(
+                itemCount: userPosts.length,
+                itemBuilder: (context, index) {
+                  final post = userPosts[index];
+                  return GestureDetector(
+                    onTap: () {
+                      freelanceProvider.openBottomSheet(context, post);
+                    },
+                    child: PostSection(
+                      message: post['Message'],
+                      user: post['UserEmail'],
+                      role: post['Role'],
+                      postId: post.id,
+                      likes: List<String>.from(post['Likes'] ?? []),
+                      commentCount: post['CommentCount'] ?? 0,
+                      timestamp1: post['TimeStamp'],
+                      postSnapshot: post, // Pass the entire DocumentSnapshot
+                    ),
+                  );
+                },
+              );
+            },
           ),
         ),
       ),

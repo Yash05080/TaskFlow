@@ -1,17 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/widgets/Posts.dart';
+
 import 'package:corporate_manager/providors/freelancingpageprovider.dart';
 import 'package:corporate_manager/providors/userprovider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Freelancingboard extends StatelessWidget {
   const Freelancingboard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final freelanceProvider = Provider.of<FreelanceBoardProvider>(context);
-    final userProvider = Provider.of<UserProvider>(context);
+    final freelanceProvider =
+        Provider.of<FreelanceBoardProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final currentUser = FirebaseAuth.instance.currentUser!;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,38 +35,48 @@ class Freelancingboard extends StatelessWidget {
           child: Column(
             children: [
               Expanded(
-                child: StreamBuilder(
+                child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection("User Posts")
                       .orderBy("TimeStamp", descending: true)
                       .snapshots(),
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          final post = snapshot.data!.docs[index];
-                          return GestureDetector(
-                            onTap: () {
-                              freelanceProvider.openBottomSheet(
-                                  context, post); // Correct usage
-                            },
-                            child: PostSection(
-                              message: post['Message'],
-                              user: post['UserEmail'],
-                              role: post['Role'],
-                              postId: post.id,
-                              likes: List<String>.from(post['Likes'] ?? []),
-                              commentCount: post['CommentCount'] ?? 0,
-                              timestamp1: post['TimeStamp'],
-                            ),
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
                       return Center(child: Text("Error: ${snapshot.error}"));
                     }
-                    return const Center(child: CircularProgressIndicator());
+
+                    final userPosts = snapshot.data?.docs ?? [];
+
+                    if (userPosts.isEmpty) {
+                      return const Center(child: Text("No posts available."));
+                    }
+
+                    return ListView.builder(
+                      itemCount: userPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = userPosts[index];
+                        return GestureDetector(
+                          onTap: () {
+                            freelanceProvider.openBottomSheet(context, post);
+                          },
+                          child: PostSection(
+                            message: post['Message'],
+                            user: post['UserEmail'],
+                            role: post['Role'],
+                            postId: post.id,
+                            likes: List<String>.from(post['Likes'] ?? []),
+                            commentCount: post['CommentCount'] ?? 0,
+                            timestamp1: post['TimeStamp'],
+                            postSnapshot:
+                                post, // Pass the entire DocumentSnapshot
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               ),
@@ -104,7 +118,9 @@ class Freelancingboard extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        onPressed: freelanceProvider.postMessage,
+                        onPressed: () {
+                          freelanceProvider.postMessage();
+                        },
                         icon: const Icon(
                           Icons.send_sharp,
                           size: 30,
