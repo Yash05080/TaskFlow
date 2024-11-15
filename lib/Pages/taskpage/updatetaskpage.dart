@@ -18,11 +18,13 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
-  late TextEditingController _priorityController;
   late TextEditingController _pointsController;
   late TextEditingController _assigneeEmailController;
-  late TextEditingController _statusController;
   DateTime? _deadline;
+
+  // Dropdown selections
+  String? _selectedPriority;
+  String? _selectedStatus;
 
   @override
   void initState() {
@@ -30,12 +32,43 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
     _titleController = TextEditingController(text: widget.task.title);
     _descriptionController =
         TextEditingController(text: widget.task.description);
-    _priorityController = TextEditingController(text: widget.task.priority);
     _pointsController =
         TextEditingController(text: widget.task.points.toString());
-    _assigneeEmailController = TextEditingController(text: widget.task.assignee); // Leave blank initially
-    _statusController = TextEditingController(text: widget.task.status);
+    _assigneeEmailController = TextEditingController(); // Initially empty
+
+    // Correctly initialize dropdown values
+    _selectedPriority = _validateDropdownValue(
+      widget.task.priority,
+      ['High', 'Medium', 'Low'],
+    );
+    _selectedStatus = _validateDropdownValue(
+      widget.task.status,
+      ['Active', 'Upcoming', 'Halt', 'Past', 'Completed'],
+    );
+
     _deadline = widget.task.deadline;
+
+    fetchAssigneeEmail();
+  }
+
+  String? _validateDropdownValue(String? currentValue, List<String> options) {
+    return options.contains(currentValue) ? currentValue : null;
+  }
+
+  void fetchAssigneeEmail() async {
+    String? email = await _taskService.getUserEmailById(widget.task.assignee);
+    setState(() {
+      _assigneeEmailController.text = email ?? 'No email found';
+    });
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _pointsController.dispose();
+    _assigneeEmailController.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,21 +92,39 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
                 decoration: const InputDecoration(labelText: 'Description'),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter a description' : null,
-                maxLines: 4, // Set maximum lines to 4
-                minLines: 1, // It will expand between 1 to 4 lines
+                maxLines: 4,
+                minLines: 1,
               ),
-              TextFormField(
-                controller: _priorityController,
+              const SizedBox(height: 16.0),
+
+              // Priority Dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedPriority,
                 decoration: const InputDecoration(labelText: 'Priority'),
+                items: ['High', 'Medium', 'Low']
+                    .map((priority) => DropdownMenuItem<String>(
+                          value: priority,
+                          child: Text(priority),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedPriority = value;
+                  });
+                },
                 validator: (value) =>
-                    value!.isEmpty ? 'Please enter a priority' : null,
+                    value == null ? 'Please select a priority' : null,
               ),
+              const SizedBox(height: 16.0),
+
               TextFormField(
                 controller: _pointsController,
                 decoration: const InputDecoration(labelText: 'Points'),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter points' : null,
               ),
+              const SizedBox(height: 16.0),
+
               TextFormField(
                 controller: _assigneeEmailController,
                 decoration:
@@ -81,12 +132,45 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter assignee email ID' : null,
               ),
-              TextFormField(
-                controller: _statusController,
+              const SizedBox(height: 16.0),
+
+              // Status Dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedStatus,
                 decoration: const InputDecoration(labelText: 'Status'),
+                items: [
+                  {'label': 'Active', 'color': Colors.green},
+                  {'label': 'Upcoming', 'color': Colors.blue},
+                  {'label': 'Halt', 'color': Colors.red},
+                  {
+                    'label': 'Completed',
+                    'color': const Color.fromARGB(255, 215, 162, 0)
+                  },
+                ]
+                    .map((status) => DropdownMenuItem<String>(
+                          value: status['label'] as String,
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: status['color'] as Color,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(status['label'] as String),
+                            ],
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedStatus = value;
+                  });
+                },
                 validator: (value) =>
-                    value!.isEmpty ? 'Please enter status' : null,
+                    value == null ? 'Please select a status' : null,
               ),
+              const SizedBox(height: 16.0),
+
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
@@ -97,11 +181,11 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
                       Map<String, dynamic> taskData = {
                         'title': _titleController.text,
                         'description': _descriptionController.text,
-                        'priority': _priorityController.text,
+                        'priority': _selectedPriority,
                         'deadline': _deadline,
                         'points': int.parse(_pointsController.text),
                         'assignee': assigneeUserId,
-                        'status': _statusController.text,
+                        'status': _selectedStatus,
                         'createdBy': widget.task.createdBy,
                       };
 

@@ -84,9 +84,28 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     return '${duration.inDays}d ${duration.inHours % 24}h ${duration.inMinutes % 60}m ${duration.inSeconds % 60}s';
   }
 
+  Color _getStatusColor(String status, bool isPast) {
+    switch (status) {
+      case 'Active' || 'active':
+        return Colors.green;
+
+      case 'Upcoming' || 'upcomming':
+        return Colors.blue;
+      case 'Halt':
+        return Colors.red;
+      case 'Past':
+        return Colors.grey;
+      case 'Completed':
+        return const Color.fromARGB(255, 255, 209, 59);
+      default:
+        return Colors.black;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userRole = context.watch<UserProvider>().userRole;
+    final bool isPast = widget.task.deadline.isBefore(DateTime.now());
 
     return Scaffold(
       appBar: AppBar(
@@ -141,7 +160,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
-                      'Assignee',
+                      'Assigned to',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
@@ -196,6 +215,25 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
                         '${widget.task.deadline.day}/${widget.task.deadline.month}/${widget.task.deadline.year}',
+                      ),
+                    ),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      'Status',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        widget.task.status,
+                        style: TextStyle(
+                          color: _getStatusColor(widget.task.status, isPast),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

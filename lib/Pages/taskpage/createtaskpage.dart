@@ -16,11 +16,13 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _priorityController = TextEditingController();
   final _pointsController = TextEditingController();
   final _assigneeEmailController = TextEditingController();
-  final _statusController = TextEditingController();
   DateTime? _deadline;
+
+  // Dropdown selections
+  String? _selectedPriority;
+  String? _selectedStatus;
 
   // Date picker for selecting the deadline
   Future<void> _selectDeadline(BuildContext context) async {
@@ -61,21 +63,12 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   labelText: 'Title',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.blue),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15.0,
-                    horizontal: 10.0,
                   ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter a title' : null,
               ),
-              const SizedBox(height: 16.0), // Space between fields
+              const SizedBox(height: 16.0),
 
               // Description Text Field
               TextFormField(
@@ -84,15 +77,6 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   labelText: 'Description',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.blue),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15.0,
-                    horizontal: 10.0,
                   ),
                 ),
                 validator: (value) =>
@@ -100,30 +84,32 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                 maxLines: 4,
                 minLines: 1,
               ),
-              const SizedBox(height: 16.0), // Space between fields
+              const SizedBox(height: 16.0),
 
-              // Priority Text Field
-              TextFormField(
-                controller: _priorityController,
+              // Priority Dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedPriority,
                 decoration: InputDecoration(
                   labelText: 'Priority',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.blue),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15.0,
-                    horizontal: 10.0,
                   ),
                 ),
+                items: ['High', 'Medium', 'Low']
+                    .map((priority) => DropdownMenuItem<String>(
+                          value: priority,
+                          child: Text(priority),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedPriority = value;
+                  });
+                },
                 validator: (value) =>
-                    value!.isEmpty ? 'Please enter a priority' : null,
+                    value == null ? 'Please select a priority' : null,
               ),
-              const SizedBox(height: 16.0), // Space between fields
+              const SizedBox(height: 16.0),
 
               // Points Text Field
               TextFormField(
@@ -132,21 +118,12 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   labelText: 'Points',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.blue),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15.0,
-                    horizontal: 10.0,
                   ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter points' : null,
               ),
-              const SizedBox(height: 16.0), // Space between fields
+              const SizedBox(height: 16.0),
 
               // Assignee Email Text Field
               TextFormField(
@@ -155,44 +132,50 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   labelText: 'Assignee Email ID',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.blue),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15.0,
-                    horizontal: 10.0,
                   ),
                 ),
                 validator: (value) =>
                     value!.isEmpty ? 'Please enter assignee email ID' : null,
               ),
-              const SizedBox(height: 16.0), // Space between fields
+              const SizedBox(height: 16.0),
 
-              // Status Text Field
-              TextFormField(
-                controller: _statusController,
+              // Status Dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedStatus,
                 decoration: InputDecoration(
                   labelText: 'Status',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.blue),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15.0,
-                    horizontal: 10.0,
                   ),
                 ),
+                items: [
+                  {'label': 'Active', 'color': Colors.green},
+                  {'label': 'Upcoming', 'color': Colors.blue},
+                  {'label': 'Halt', 'color': Colors.red},
+                ]
+                    .map((status) => DropdownMenuItem<String>(
+                          value: status['label'] as String,
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: status['color'] as Color,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(status['label'] as String),
+                            ],
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedStatus = value;
+                  });
+                },
                 validator: (value) =>
-                    value!.isEmpty ? 'Please enter status' : null,
+                    value == null ? 'Please select a status' : null,
               ),
-              const SizedBox(height: 16.0), // Space between fields
+              const SizedBox(height: 16.0),
 
               // Date Picker for Deadline
               Padding(
@@ -213,8 +196,9 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 32.0), // Space before submit button
+              const SizedBox(height: 32.0),
 
+              // Submit Button
               Consumer<TaskState>(
                 builder: (context, taskState, _) => ElevatedButton(
                   onPressed: taskState.isLoading
@@ -230,21 +214,17 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                             if (assigneeUserId != null &&
                                 assigneeUserId.isNotEmpty) {
                               Task task = Task(
-                                id: '', // Assuming the ID is auto-generated when the task is created
+                                id: '',
                                 title: _titleController.text,
                                 description: _descriptionController.text,
-                                priority: _priorityController.text,
+                                priority: _selectedPriority!,
                                 points: int.parse(_pointsController.text),
-                                assignee:
-                                    assigneeUserId, // Pass the fetched assignee ID
-                                status: _statusController.text,
-                                deadline:
-                                    _deadline!, // Ensure this is a DateTime
-                                createdBy:
-                                    userId ?? '', // Handle if user ID is null
+                                assignee: assigneeUserId,
+                                status: _selectedStatus!,
+                                deadline: _deadline!,
+                                createdBy: userId ?? '',
                               );
 
-                              // Create the task
                               await taskState.createTask(task);
 
                               if (!taskState.isLoading) {

@@ -109,7 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Taskhistory()));
+                                builder: (context) => const TaskHistoryPage()));
                         // Navigate to tasks history page
                       },
                     ),

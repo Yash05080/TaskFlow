@@ -18,6 +18,7 @@ class MainNavBar extends StatelessWidget {
     Freelancingboard(),
     ProfilePage(),
   ];
+  
 
   @override
   Widget build(BuildContext context) {
