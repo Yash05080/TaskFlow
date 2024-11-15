@@ -39,7 +39,7 @@ class _PostHistoryState extends State<PostHistory> {
     }
   }
 
-  void _openBottomSheet(BuildContext context, String postId) {
+  void _openBottomSheet(BuildContext context, DocumentSnapshot post) {
     if (_isBottomSheetOpen) {
       _bottomSheetController?.close();
     } else {
@@ -51,7 +51,13 @@ class _PostHistoryState extends State<PostHistory> {
             minChildSize: 0.3,
             initialChildSize: 0.5,
             builder: (BuildContext context, ScrollController scrollController) {
-              return Comments(postId: postId);
+              return Comments(
+                postId: post.id,
+                postMessage: post['Message'],
+                postUser: post['UserEmail'],
+                postRole: post['Role'],
+                postTimestamp: post['TimeStamp'],
+              );
             },
           );
         },
@@ -105,7 +111,7 @@ class _PostHistoryState extends State<PostHistory> {
                           final post = userPosts[index];
                           return GestureDetector(
                             onTap: () {
-                              _openBottomSheet(context, post.id);
+                              _openBottomSheet(context, post);
                             },
                             child: PostSection(
                               message: post['Message'],

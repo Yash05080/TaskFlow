@@ -1,4 +1,5 @@
 import 'package:corporate_manager/autherisation/LoginPage/MainDirector.dart';
+import 'package:corporate_manager/providors/freelancingpageprovider.dart';
 import 'package:corporate_manager/providors/pageprovidor.dart';
 import 'package:corporate_manager/providors/taskprovider.dart';
 import 'package:corporate_manager/providors/taskstateprovider.dart';
@@ -17,6 +18,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => UserProvider()),
       ChangeNotifierProvider(create: (_) => PageProvider()),
       ChangeNotifierProvider(create: (_) => TaskProvider()),
+      ChangeNotifierProvider(create: (_) => FreelanceBoardProvider()),
       ChangeNotifierProvider(
       create: (context) => TaskState(),),
 

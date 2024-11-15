@@ -1,121 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/widgets/Posts.dart';
-import 'package:corporate_manager/Pages/freelancing%20board/functions/fetchrole.dart';
-import 'package:corporate_manager/Pages/freelancing%20board/widgets/comments.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:corporate_manager/providors/freelancingpageprovider.dart';
+import 'package:corporate_manager/providors/userprovider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class Freelancingboard extends StatefulWidget {
+class Freelancingboard extends StatelessWidget {
   const Freelancingboard({super.key});
 
   @override
-  State<Freelancingboard> createState() => _FreelancingboardState();
-}
-
-class _FreelancingboardState extends State<Freelancingboard> {
-  final currentUser = FirebaseAuth.instance.currentUser!;
-  final textController = TextEditingController();
-  String _userRole = "Employee";
-  bool _isBottomSheetOpen = false;
-  PersistentBottomSheetController? _bottomSheetController;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchUserRole();
-    initializeCommentCounts();
-  }
-
-  Future<void> initializeCommentCounts() async {
-    QuerySnapshot postsSnapshot =
-        await FirebaseFirestore.instance.collection("User Posts").get();
-
-    for (var post in postsSnapshot.docs) {
-      try {
-        post.get('CommentCount');
-      } catch (e) {
-        await FirebaseFirestore.instance
-            .collection("User Posts")
-            .doc(post.id)
-            .update({'CommentCount': 0});
-      }
-    }
-  }
-
-  Future<void> _fetchUserRole() async {
-    UserService userService = UserService();
-    String? role = await userService.fetchUserRole();
-
-    if (role != null && mounted) {
-      setState(() {
-        _userRole = role;
-      });
-    }
-  }
-
-  void PostMessage() {
-    if (textController.text.isNotEmpty) {
-      FirebaseFirestore.instance.collection("User Posts").add({
-        'UserEmail': currentUser.email,
-        'Message': textController.text,
-        'Role': _userRole,
-        'TimeStamp': Timestamp.now(),
-        'Likes': [],
-        'CommentCount': 0,
-      });
-      if (mounted) {
-        setState(() {
-          textController.clear();
-        });
-      }
-    }
-  }
-
-  void _openBottomSheet(BuildContext context, String postId) {
-    if (_isBottomSheetOpen) {
-      _bottomSheetController?.close();
-    } else {
-      _bottomSheetController = showBottomSheet(
-        context: context,
-        builder: (context) {
-          return DraggableScrollableSheet(
-            maxChildSize: 0.8,
-            minChildSize: 0.3,
-            initialChildSize: 0.5,
-            builder: (BuildContext context, ScrollController scrollController) {
-              return Comments(postId: postId);
-            },
-          );
-        },
-      );
-
-      if (mounted) {
-        setState(() {
-          _isBottomSheetOpen = true;
-        });
-      }
-
-      _bottomSheetController?.closed.then((value) {
-        if (mounted) {
-          setState(() {
-            _isBottomSheetOpen = false;
-          });
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    textController.dispose();
-    if (_isBottomSheetOpen) {
-      _bottomSheetController?.close();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final freelanceProvider = Provider.of<FreelanceBoardProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -126,8 +23,9 @@ class _FreelancingboardState extends State<Freelancingboard> {
       body: SafeArea(
         child: GestureDetector(
           onPanUpdate: (details) {
-            if (_isBottomSheetOpen && details.delta.dy > 0) {
-              _bottomSheetController?.close();
+            // This ensures the bottom sheet closes only if it's open and user scrolls down
+            if (freelanceProvider.isBottomSheetOpen && details.delta.dy > 0) {
+              freelanceProvider.closeBottomSheet(); // Close bottom sheet
             }
           },
           child: Column(
@@ -146,7 +44,8 @@ class _FreelancingboardState extends State<Freelancingboard> {
                           final post = snapshot.data!.docs[index];
                           return GestureDetector(
                             onTap: () {
-                              _openBottomSheet(context, post.id);
+                              freelanceProvider.openBottomSheet(
+                                  context, post); // Correct usage
                             },
                             child: PostSection(
                               message: post['Message'],
@@ -162,8 +61,6 @@ class _FreelancingboardState extends State<Freelancingboard> {
                       );
                     } else if (snapshot.hasError) {
                       return Center(child: Text("Error: ${snapshot.error}"));
-                    } else if (!snapshot.hasData) {
-                      return Center(child: Text("no post yet"));
                     }
                     return const Center(child: CircularProgressIndicator());
                   },
@@ -179,36 +76,35 @@ class _FreelancingboardState extends State<Freelancingboard> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: TextField(
-                            controller: textController,
+                            controller: freelanceProvider.textController,
                             style: const TextStyle(
                               color: Color.fromARGB(255, 101, 67, 33),
                             ),
                             cursorColor: Colors.brown,
                             decoration: InputDecoration(
-                                labelText: "Post Something",
-                                labelStyle: const TextStyle(
-                                    fontSize: 16, color: Colors.brown),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.brown, width: 2),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                floatingLabelStyle: const TextStyle(
+                              labelText: "Post Something",
+                              labelStyle: const TextStyle(
+                                  fontSize: 16, color: Colors.brown),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Colors.brown, width: 2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              floatingLabelStyle: const TextStyle(
+                                  color: Color.fromARGB(255, 101, 67, 33),
+                                  fontSize: 18),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 101, 67, 33),
-                                    fontSize: 18),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Color.fromARGB(255, 101, 67, 33),
-                                      width: 1.5),
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
+                                    width: 1.5),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
-                          PostMessage();
-                        },
+                        onPressed: freelanceProvider.postMessage,
                         icon: const Icon(
                           Icons.send_sharp,
                           size: 30,
