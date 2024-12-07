@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corporate_manager/Pages/Profile/feature%20pages/PostHistory.dart';
 import 'package:corporate_manager/Pages/Profile/feature%20pages/Updateprofile.dart';
 import 'package:corporate_manager/Pages/Profile/feature%20pages/taskhistory.dart';
@@ -15,39 +16,58 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String? _userRole;
+  String? _profilePictureUrl;
+  int _completedTasks = 1;
+  
+
+  Future<void> _fetchCompletedTasks() async {
+    try {
+      User? currentUser = _auth.currentUser; // Get current user
+      if (currentUser == null) return;
+
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('tasks') // Adjust collection name if needed
+          .where('assignee', isEqualTo: currentUser.uid) // User's UID
+          .where('status', isEqualTo: 'Completed') // Completed tasks only
+          .get();
+      
+
+      setState(() {
+        print(currentUser.uid);
+        _completedTasks = querySnapshot.docs.length; // Count completed tasks
+      });
+    } catch (error) {
+      print('Error fetching completed tasks: $error');
+    }
+  }
 
   Future<void> getUserRole() async {
     UserService userService = UserService();
     String? role = await userService.fetchUserRole(); // Fetch the user role
-    setState(() {
-      _userRole = role; // Store it in the state to be used in the UI
-    });
-  }
 
-  void _sendEmail() async {
-    final String email = 'yash05080@gmail.com';
-    final String subject = 'Subject Here'; // You can set a default subject
-    final String body = 'Message Here'; // You can set a default message
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(currentUser.uid).get();
 
-    final Uri emailUri = Uri(
-      scheme: 'mailto',
-      path: email,
-      query: Uri.encodeFull('subject=$subject&body=$body'),
-    );
+      if (userDoc.exists) {
+        final userData = userDoc.data() as Map<String, dynamic>?;
 
-    // Launch the email app
-    if (await canLaunch(emailUri.toString())) {
-      await launch(emailUri.toString());
-    } else {
-      throw 'Could not launch $emailUri';
+        setState(() {
+          _userRole = role; // Store role in state
+          _profilePictureUrl = userData?['profilePicture']; // Get profile pic
+        });
+      }
     }
   }
 
   @override
   void initState() {
     super.initState();
-    getUserRole(); // Fetch the user role when the widget initializes
+    _fetchCompletedTasks();
+    getUserRole(); // Fetch the user role and profile picture
   }
 
   @override
@@ -58,8 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // Fallback values if user info is not available
     String userName = currentUser?.displayName ?? 'No Name';
     String userEmail = currentUser?.email ?? 'No Email';
-    String userRole = _userRole ??
-        "loading..."; // You can replace it with data from Firestore
+    String userRole = _userRole ?? "loading...";
     int completedTasks = 25; // Example static data; Fetch from database
 
     return Scaffold(
@@ -69,22 +88,20 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //profile pic
-              const Center(
+              // Profile Picture Section
+              Center(
                 child: CircleAvatar(
                   radius: 100,
-                  backgroundImage: AssetImage('assets/images/demo.JPG'),
+                  backgroundImage: _profilePictureUrl != null &&
+                          _profilePictureUrl!.isNotEmpty
+                      ? NetworkImage(_profilePictureUrl!)
+                      : AssetImage('assets/profile.jpeg') as ImageProvider,
                 ),
               ),
-
-              const SizedBox(
-                height: 20,
-              ),
-              // User Details Section
-              _buildUserInfo(userName, userEmail, userRole, completedTasks),
-
               const SizedBox(height: 20),
-
+              // User Details Section
+              _buildUserInfo(userName, userEmail, userRole, _completedTasks),
+              const SizedBox(height: 20),
               // Options List
               Expanded(
                 child: ListView(
@@ -94,11 +111,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Your Posts',
                       Icons.comment,
                       () {
-                        // Navigate to the freelancing comments page
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const PostHistory()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PostHistory()),
+                        );
                       },
                     ),
                     _buildProfileOption(
@@ -107,10 +124,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       Icons.task_alt,
                       () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const TaskHistoryPage()));
-                        // Navigate to tasks history page
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const TaskHistoryPage()),
+                        );
                       },
                     ),
                     _buildProfileOption(
@@ -126,7 +143,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Report',
                       Icons.report,
                       () {
-                        // _sendEmail();
                         // Navigate to report page
                       },
                     ),
@@ -135,16 +151,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Update Profile',
                       Icons.history,
                       () {
-                        // Navigate to tasks history page
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UpdateProfilePage()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UpdateProfilePage()),
+                        );
                       },
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
+                    const SizedBox(height: 15),
                     const LogOutButton(),
                   ],
                 ),
@@ -194,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
   ) {
     return Card(
       child: ListTile(
-        leading: Icon(icon),
+        leading: Icon(icon, color: Colors.brown),
         title: Text(title),
         onTap: onTap,
       ),

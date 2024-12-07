@@ -27,50 +27,53 @@ class _RegisterPageState extends State<RegisterPage> {
   String _password = '';
 
   void _registerUser() async {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-    try {
-      // Create a new user with email and password
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _email,
-        password: _password,
-      );
+      try {
+        // Create a new user with email and password
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
+          email: _email,
+          password: _password,
+        );
 
-      // Combine name and lastName to form displayName
-      String displayName = '$_name $_lastName';
+        // Combine name and lastName to form displayName
+        String displayName = '$_name $_lastName';
 
-      // Update the user's displayName
-      await userCredential.user!.updateDisplayName(displayName);
+        // Update the user's displayName
+        await userCredential.user!.updateDisplayName(displayName);
 
-      // Update the user in Firestore with additional information
-      UserModel newUser = UserModel(
-        uid: userCredential.user!.uid,
-        role: _role,
-        name: _name,
-        lastName: _lastName,
-        email: _email,
-        phoneNo: _phoneNo,
-      );
+        // Default profile picture path
+        String defaultProfilePicture = 'assets/profile.jpeg';
 
-      // Add the user details to the Firestore collection
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(newUser.uid)
-          .set(newUser.toMap());
+        // Update the user in Firestore with additional information
+        UserModel newUser = UserModel(
+          uid: userCredential.user!.uid,
+          role: _role,
+          name: _name,
+          lastName: _lastName,
+          email: _email,
+          phoneNo: _phoneNo,
+          profilePictureUrl: defaultProfilePicture,
+        );
 
-      // Optionally, refresh the current user's profile
-      await userCredential.user!.reload();
-      
-      // Navigate to another page or show success message (e.g., login page or home page)
-    } catch (e) {
-      print(e);
-      // Handle error (e.g., show a message to the user)
+        // Add the user details to the Firestore collection
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(newUser.uid)
+            .set(newUser.toMap());
+
+        // Optionally, refresh the current user's profile
+        await userCredential.user!.reload();
+
+        // Navigate to another page or show success message (e.g., login page or home page)
+      } catch (e) {
+        print(e);
+        // Handle error (e.g., show a message to the user)
+      }
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -83,43 +86,45 @@ class _RegisterPageState extends State<RegisterPage> {
               key: _formKey,
               child: Column(
                 children: [
-                    Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Text(
-                          "Registor now",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 101, 67, 33),
-                          ),
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      "Registor now",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 101, 67, 33),
                       ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      //register now image
-                  
-                      SvgPicture.asset(
-                        'assets/icons/signup.svg',
-                        height: 200,
-                      ),
-                      SizedBox(height: 20,),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  //register now image
+
+                  SvgPicture.asset(
+                    'assets/icons/signup.svg',
+                    height: 200,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
                   FadeInUp(
                     delay: const Duration(milliseconds: 200),
-                  duration: const Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 500),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        
                         DropdownButtonFormField<String>(
                           decoration: const InputDecoration(
                               labelText: 'Role',
                               labelStyle: TextStyle(
                                   color: Color.fromARGB(255, 161, 117, 92))),
                           value: _role,
-                          items: ['Employee', 'Manager', 'Admin'].map((String role) {
+                          items: ['Employee', 'Manager', 'Admin']
+                              .map((String role) {
                             return DropdownMenuItem<String>(
                               value: role,
                               child: Text(
@@ -144,8 +149,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           decoration: const InputDecoration(
                             labelText: 'First Name',
-                            labelStyle:
-                                TextStyle(color: Color.fromARGB(255, 161, 117, 92)),
+                            labelStyle: TextStyle(
+                                color: Color.fromARGB(255, 161, 117, 92)),
                           ),
                           validator: (value) =>
                               value!.isEmpty ? 'Enter first name' : null,
@@ -184,7 +189,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               labelText: 'Email',
                               labelStyle: TextStyle(
                                   color: Color.fromARGB(255, 161, 117, 92))),
-                          validator: (value) => value!.isEmpty ? 'Enter email' : null,
+                          validator: (value) =>
+                              value!.isEmpty ? 'Enter email' : null,
                           onSaved: (value) => _email = value!,
                           keyboardType: TextInputType.emailAddress,
                         ),

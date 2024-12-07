@@ -1,14 +1,37 @@
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // User rules
     match /users/{userId} {
       allow read: if request.auth.uid != null;
       allow write: if request.auth.uid == userId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "Admin";
     }
 
+    // Profile Picture
+     match /profilePictures/{userId} {
+      allow read: if true; // Publicly readable
+      allow write: if request.auth != null && request.auth.uid == userId; // Only the owner can upload their profile picture
+    }
+
+    // Task rules
     match /tasks/{taskId} {
       allow read: if request.auth.uid != null;
       allow create, update: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["Admin", "Manager"];
       allow delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "Admin";
+    }
+
+    // Post rules
+    match /user_posts/{postId} {
+      allow read, write: if request.auth.uid != null;
+    }
+    
+    match /Posts/{postId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Default fallback rule
+    match /{document=**} {
+      allow read, write: if request.auth.uid != null;
     }
   }
 }

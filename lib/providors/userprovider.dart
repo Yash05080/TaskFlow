@@ -1,3 +1,4 @@
+import 'package:corporate_manager/models/user_class.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +12,38 @@ class UserProvider with ChangeNotifier {
   String get userRole => _userRole ?? 'User';
   User? get currentUser => _currentUser;
   bool _isFetchingRole = false;
+  UserModel? _user;
+
+  UserModel? get user => _user;
+
+  Future<void> fetchUserData(String uid) async {
+    try {
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (userDoc.exists) {
+        _user = UserModel.fromMap(userDoc.data() as Map<String, dynamic>);
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
+  }
+
+  void updateProfilePicture(String newUrl) {
+    if (_user != null) {
+      _user = UserModel(
+        uid: _user!.uid,
+        role: _user!.role,
+        name: _user!.name,
+        lastName: _user!.lastName,
+        email: _user!.email,
+        phoneNo: _user!.phoneNo,
+        profilePictureUrl: newUrl,
+      );
+      notifyListeners();
+    }
+  }
 
   UserProvider() {
     _initializeUser();
@@ -36,10 +69,8 @@ class UserProvider with ChangeNotifier {
 
     try {
       if (_currentUser != null) {
-        DocumentSnapshot userDoc = await _firestore
-            .collection('users')
-            .doc(_currentUser!.uid)
-            .get();
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(_currentUser!.uid).get();
 
         if (userDoc.exists && userDoc['role'] != null) {
           _userRole = userDoc['role'] as String;
