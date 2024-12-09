@@ -1,13 +1,14 @@
 import 'package:corporate_manager/Pages/HomePage/widgets/activityfeed.dart';
+import 'package:corporate_manager/Pages/HomePage/widgets/performancematrix.dart';
 import 'package:corporate_manager/Pages/HomePage/widgets/statcard.dart';
 import 'package:corporate_manager/Pages/freelancing%20board/widgets/Posts.dart';
-import 'package:corporate_manager/Pages/freelancing%20board/widgets/comments.dart';
 import 'package:corporate_manager/providors/freelancingpageprovider.dart';
 import 'package:corporate_manager/providors/userprovider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MyDashBoard extends StatefulWidget {
   const MyDashBoard({super.key});
@@ -26,13 +27,11 @@ class _MyDashBoardState extends State<MyDashBoard> {
     _initializePage();
   }
 
-  // Function to initialize page, fetch data only on login or refresh
   void _initializePage() {
     statsFuture = fetchStats();
   }
 
   Future<Map<String, dynamic>> fetchStats() async {
-    // Replace with your Firebase logic
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser!.uid;
 
@@ -57,15 +56,11 @@ class _MyDashBoardState extends State<MyDashBoard> {
     };
   }
 
-  void _refreshStats() {
-    setState(() {
-      statsFuture = fetchStats();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final _userRole = Provider.of<UserProvider>(context).userRole;
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser!.uid;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -74,25 +69,30 @@ class _MyDashBoardState extends State<MyDashBoard> {
           '$_userRole Dashboard',
           style: TextStyle(color: Colors.brown[800]),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.brown),
-            onPressed: _refreshStats,
-            tooltip: 'Refresh Dashboard',
-          ),
-        ],
+        
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Section: Stats
+            // Top Section: Stats with Scrollable Row
             FutureBuilder<Map<String, dynamic>>(
               future: statsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: List.generate(
+                        3,
+                        (index) => const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: StatCardLoader(),
+                        ),
+                      ),
+                    ),
+                  );
                 }
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
@@ -101,7 +101,6 @@ class _MyDashBoardState extends State<MyDashBoard> {
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       StatCard(
                         title: 'Discussions',
@@ -206,8 +205,54 @@ class _MyDashBoardState extends State<MyDashBoard> {
               'Performance Metrics',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            //PerformanceChart(),
+            SizedBox(height: 10,),
+            // Performance Metrics Placeholder
+            FutureBuilder<Map<String, dynamic>>(
+              future: statsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                final stats = snapshot.data!;
+                return PerformanceMatrix(
+                  userId: userId,
+                  assignedTasks: stats['assignedTasks'],
+                  completedTasks: stats['completedTasks'],
+                  pastTasks: stats['assignedTasks'] - stats['completedTasks'],
+                );
+              },
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// Updated StatCardLoader for larger cards
+class StatCardLoader extends StatelessWidget {
+  const StatCardLoader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          width: 120, // Increased width
+          height: 150, // Increased height
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(15),
+          ),
         ),
       ),
     );
