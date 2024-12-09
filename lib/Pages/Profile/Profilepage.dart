@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corporate_manager/Pages/Profile/feature%20pages/Pointspage.dart';
 import 'package:corporate_manager/Pages/Profile/feature%20pages/PostHistory.dart';
 import 'package:corporate_manager/Pages/Profile/feature%20pages/Updateprofile.dart';
 import 'package:corporate_manager/Pages/Profile/feature%20pages/taskhistory.dart';
@@ -19,24 +20,23 @@ class _ProfilePageState extends State<ProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String? _userRole;
   String? _profilePictureUrl;
-  int _completedTasks = 1;
-  
+  int _completedTasks = 0;
+
+  QuerySnapshot? querySnapshot;
 
   Future<void> _fetchCompletedTasks() async {
     try {
-      User? currentUser = _auth.currentUser; // Get current user
+      User? currentUser = _auth.currentUser;
       if (currentUser == null) return;
 
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('tasks') // Adjust collection name if needed
-          .where('assignee', isEqualTo: currentUser.uid) // User's UID
-          .where('status', isEqualTo: 'Completed') // Completed tasks only
+      querySnapshot = await FirebaseFirestore.instance
+          .collection('tasks')
+          .where('assignee', isEqualTo: currentUser.uid)
+          .where('status', isEqualTo: 'Completed')
           .get();
-      
 
       setState(() {
-        print(currentUser.uid);
-        _completedTasks = querySnapshot.docs.length; // Count completed tasks
+        _completedTasks = querySnapshot!.docs.length;
       });
     } catch (error) {
       print('Error fetching completed tasks: $error');
@@ -135,7 +135,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       'My Points',
                       Icons.stars,
                       () {
-                        // Navigate to the points page
+                        if (querySnapshot != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PointsPage(
+                                  completedTasksSnapshot: querySnapshot!),
+                            ),
+                          );
+                        }
                       },
                     ),
                     _buildProfileOption(

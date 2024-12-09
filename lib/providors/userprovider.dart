@@ -9,7 +9,7 @@ class UserProvider with ChangeNotifier {
 
   String? _userRole;
   User? _currentUser;
-  String get userRole => _userRole ?? 'User';
+  String get userRole => _userRole ?? 'Employee';
   User? get currentUser => _currentUser;
   bool _isFetchingRole = false;
   UserModel? _user;
@@ -75,7 +75,7 @@ class UserProvider with ChangeNotifier {
         if (userDoc.exists && userDoc['role'] != null) {
           _userRole = userDoc['role'] as String;
         } else {
-          _userRole = 'User'; // Default role if none found
+          _userRole = 'Admin'; // Default role if none found
         }
         notifyListeners(); // Notify consumers of the change
       } else {
