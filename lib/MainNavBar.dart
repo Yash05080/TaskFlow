@@ -15,7 +15,7 @@ class MainNavBar extends StatelessWidget {
     const ChatPage(),
     const TaskPage(),
     const MyDashBoard(),
-    Freelancingboard(),
+    const Freelancingboard(),
     ProfilePage(),
   ];
   

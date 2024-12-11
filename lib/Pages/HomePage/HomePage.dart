@@ -67,7 +67,7 @@ class _MyDashBoardState extends State<MyDashBoard> {
       appBar: AppBar(
         title: Text(
           '$_userRole Dashboard',
-          style: TextStyle(color: Colors.brown[800]),
+          style: TextStyle(color: Colors.brown[800],fontWeight: FontWeight.bold),
         ),
         
       ),
@@ -129,7 +129,7 @@ class _MyDashBoardState extends State<MyDashBoard> {
 
             // Recent Freelance Posts Section
             const Text(
-              'Recent Freelance Posts',
+              'Recent Discussions',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),

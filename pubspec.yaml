@@ -35,13 +35,13 @@ dependencies:
   hexcolor: ^3.0.1
   animate_do: ^3.3.4
   flutter_svg: ^2.0.7
-  intl: ^0.18.0
+  intl: ^0.19.0
   url_launcher: ^6.3.1
   provider: ^6.0.5
   dash_chat_2: ^0.0.20
   firebase_analytics: ^11.3.3
   delightful_toast: ^1.1.0
-  get_it: ^7.6.7
+  get_it: ^8.0.2
   image_picker: ^1.1.2 
   path: ^1.9.0
 
@@ -58,6 +58,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.2
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/taskflow.png"    
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

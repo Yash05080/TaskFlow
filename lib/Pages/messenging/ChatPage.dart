@@ -23,7 +23,7 @@ class _ChatpageState extends State<ChatPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("CHAT UP"),
+        title: Text("Messages",style: TextStyle(fontWeight: FontWeight.bold),),
       ),
       body: _buildUserList(_currentUser),
     );
