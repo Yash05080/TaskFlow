@@ -1,18 +1,115 @@
-# corporate_manager
+# Taskflow - Your Ultimate Corporate Management Solution
 
-A new Flutter project.
+🚀 **Boost Productivity | Enhance Collaboration | Streamline Task Management**
 
-## Getting Started
 
-currently i am working on project which can help in managing huge projects in a corporate setting or even in an open source setting. it will help in maintaining a proper work space by providing github like features for commit requests. It will have a built in task manager with grid like leetcode which will work exactly as in leetcode: the more problem you solve, the more brighter your daily report cell. IT has a hierarchical database model where the higher position you are at , the more information you can see about people under you.
-people at superior positions like admin and managers can assign task in direct as well as free lance method. the tasks will be worth of some points depending on the difficulty of the task .based on the daily quota of work assigned to the employee , he/she will need to earn points by completing the tasks.
-It makes it easier to manage the workflow.
 
-A few resources to get you started if this is your first Flutter project:
+## 🌟 Key Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 🔥 Task Management
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Gamified points system with priority-based visual cues.
+- Countdown timer for task deadlines with real-time updates.
+
+### 🗨️ Freelancing Board
+
+- Post ideas, freelance offers, and collaborate easily.
+- Interactive comment section with a draggable bottom sheet for seamless viewing.
+
+### 📊 Performance Tracking
+
+- Visual progress metrics inspired by LeetCode's performance grid.
+- Points system to track individual contributions efficiently.
+
+### 👤 User Profiles
+
+- Role-based access control for enhanced security.
+- Firebase-based profile management with optimized data fetching.
+
+### 🧩 Custom Navigation
+
+- Stationary BottomNavigationBar that stays visible even when the keyboard is active.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Flutter** (Frontend UI/UX)
+- **Firebase Firestore** (Real-time Database)
+- **Provider** (State Management)
+- **GitHub REST API** (Version Control Integration)
+- **Figma** (UI Design)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Ensure you have the following tools installed:
+
+- Flutter SDK (v3.x.x or above)
+- Dart (v2.x.x or above)
+- Firebase account with Firestore configured
+
+### Installation
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/Yash05080/Taskflow.git
+   cd Taskflow
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   flutter pub get
+   ```
+
+3. **Firebase Setup**
+
+   - Download the `google-services.json` file from Firebase Console.
+   - Place it inside the `/android/app` directory.
+
+4. **Run the App**
+
+   ```bash
+   flutter run
+   ```
+
+---
+
+
+## 🚧 Roadmap
+
+✅ Implement core task management features\
+✅ Add gamified points system\
+✅ Integrate Firebase for real-time updates\
+🔄 Enhance UI/UX for improved user experience\
+🚀 Future: Introduce advanced analytics and reporting
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m 'Add your feature'`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Open a pull request
+
+---
+
+## 💬 Contact
+
+For questions or collaboration, feel free to reach out:
+
+- 📧 Email: [yashagarwal.dev@gmail.com](mailto\:yashagarwal.dev@gmail.com)
+- 💼 [LinkedIn](https://linkedin.com/in/yashagarwal)
+
+Made with ❤️ by **Yash Agarwal**
+
+
