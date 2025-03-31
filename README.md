@@ -34,12 +34,25 @@
 
 ## 📌 Screenshots
 
-| Home Page | Task Details | Freelancing Board |
-|-----------|-------------|-------------------|
-| ![Home](![Simulator Screenshot - iPhone 16 Pro Max - 2025-03-31 at 17 14 15](https://github.com/user-attachments/assets/ed62289e-e146-4977-aa13-4b2093f5c940)
-) | ![Task](![Simulator Screenshot - iPhone 16 Pro Max - 2025-03-31 at 17 04 18](https://github.com/user-attachments/assets/1b70568b-8dd2-405e-9504-e9935d5a5c68)
-) | ![Freelancing![Simulator Screenshot - iPhone 16 Pro Max - 2025-03-31 at 17 13 44](https://github.com/user-attachments/assets/b52ddf1a-df43-405b-b5e5-4f7de23c7caa)
-) |
+### 🏠 Home Page
+| Screenshot 1 | Screenshot 2 |
+|-------------|-------------|
+| ![Home 1](https://github.com/user-attachments/assets/970c60e4-4b90-41e7-89e9-10f577286d3e)
+| ![Home 2](https://github.com/user-attachments/assets/57609abd-b91d-4cec-a390-5d0413c26b3d)
+|
+
+### 📋 Task Details
+| Screenshot 1 | Screenshot 2 |
+|-------------|-------------|
+| ![Task 1](https://github.com/user-attachments/assets/712017f1-390f-491b-9a35-7b39028de05e)
+| ![Task 2](https://github.com/user-attachments/assets/15e86aeb-c805-4a4e-bc17-e40909405123)
+|
+
+### 💼 Freelancing Board
+| Screenshot 1 | Screenshot 2 |
+|-------------|-------------|
+| ![Freelance 1](https://github.com/user-attachments/assets/f7dea1a2-6acc-4ca2-b0e8-ae502a7bb981)
+| ![Freelance 2](https://github.com/user-attachments/assets/457eb336-cd09-4930-bd25-4d300e8e560e) |
 
 ---
 
