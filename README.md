@@ -32,6 +32,17 @@
 
 ---
 
+## 📌 Screenshots
+
+| Home Page | Task Details | Freelancing Board |
+|-----------|-------------|-------------------|
+| ![Home](![Simulator Screenshot - iPhone 16 Pro Max - 2025-03-31 at 17 14 15](https://github.com/user-attachments/assets/ed62289e-e146-4977-aa13-4b2093f5c940)
+) | ![Task](![Simulator Screenshot - iPhone 16 Pro Max - 2025-03-31 at 17 04 18](https://github.com/user-attachments/assets/1b70568b-8dd2-405e-9504-e9935d5a5c68)
+) | ![Freelancing![Simulator Screenshot - iPhone 16 Pro Max - 2025-03-31 at 17 13 44](https://github.com/user-attachments/assets/b52ddf1a-df43-405b-b5e5-4f7de23c7caa)
+) |
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Flutter** (Frontend UI/UX)
