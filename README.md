@@ -126,8 +126,8 @@ Contributions are welcome! To contribute:
 
 For questions or collaboration, feel free to reach out:
 
-- 📧 Email: [yashagarwal.dev@gmail.com](mailto\:yashagarwal.dev@gmail.com)
-- 💼 [LinkedIn](https://linkedin.com/in/yashagarwal)
+- 📧 Email: [yash05080@gmail.com](mailto\:yash05080@gmail.com)
+- 💼 LinkedIn: [Yash Agarwal](https://www.linkedin.com/in/yash-agarwal-a701a028a/)
 
 Made with ❤️ by **Yash Agarwal**
 
